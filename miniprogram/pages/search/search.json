@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "search-bar": "/components/search-bar/search-bar",
+    "concert-card": "/components/concert-card/concert-card"
+  }
+}

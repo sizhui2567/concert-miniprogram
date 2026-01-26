@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/search/search",
+    "pages/detail/detail",
+    "pages/subscribe/subscribe",
+    "pages/tomorrow/tomorrow",
+    "pages/mine/mine",
+    "pages/admin/login/login",
+    "pages/admin/list/list",
+    "pages/admin/edit/edit",
+    "pages/admin/artists/artists"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF6B6B",
+    "navigationBarTitleText": "演唱会查询",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FF6B6B",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/tomorrow/tomorrow",
+        "text": "明日抢票",
+        "iconPath": "images/tab-ticket.png",
+        "selectedIconPath": "images/tab-ticket-active.png"
+      },
+      {
+        "pagePath": "pages/subscribe/subscribe",
+        "text": "我的订阅",
+        "iconPath": "images/tab-subscribe.png",
+        "selectedIconPath": "images/tab-subscribe-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab-mine.png",
+        "selectedIconPath": "images/tab-mine-active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "concert-card": "/components/concert-card/concert-card",
+    "platform-icons": "/components/platform-icons/platform-icons",
+    "stage-tag": "/components/stage-tag/stage-tag",
+    "search-bar": "/components/search-bar/search-bar"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

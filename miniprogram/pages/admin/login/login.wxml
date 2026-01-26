@@ -1,0 +1,33 @@
+<!-- pages/admin/login/login.wxml -->
+<view class="container">
+  <view class="login-card">
+    <view class="logo-section">
+      <image class="logo" src="/images/admin-logo.png" mode="aspectFit" />
+      <text class="title">管理后台</text>
+      <text class="subtitle">演唱会查询小程序</text>
+    </view>
+
+    <view class="form-section">
+      <view class="input-group">
+        <image class="input-icon" src="/images/icon-lock.png" mode="aspectFit" />
+        <input
+          class="input"
+          type="text"
+          password
+          placeholder="请输入管理员密码"
+          value="{{password}}"
+          bindinput="onInputPassword"
+          bindconfirm="onLogin"
+        />
+      </view>
+
+      <button class="btn-login" bindtap="onLogin">
+        登 录
+      </button>
+    </view>
+
+    <view class="tips">
+      <text>提示：请联系管理员获取密码</text>
+    </view>
+  </view>
+</view>

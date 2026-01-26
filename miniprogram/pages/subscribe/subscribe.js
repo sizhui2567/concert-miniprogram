@@ -1,0 +1,170 @@
+// pages/subscribe/subscribe.js
+const api = require('../../utils/api');
+const { PAGE_SIZE } = require('../../utils/constants');
+const { showToast } = require('../../utils/util');
+
+Page({
+  data: {
+    activeTab: 'concerts', // concerts, artists
+    concerts: [],
+    artists: [],
+    page: 1,
+    hasMore: true,
+    loading: false,
+    refreshing: false
+  },
+
+  onLoad() {
+    this.checkLogin();
+  },
+
+  onShow() {
+    this.loadData();
+  },
+
+  // 检查登录状态
+  checkLogin() {
+    const app = getApp();
+    if (!app.globalData.openid) {
+      // 可以在这里引导用户登录
+    }
+  },
+
+  // 下拉刷新
+  onPullDownRefresh() {
+    this.setData({ refreshing: true });
+    this.loadData().then(() => {
+      wx.stopPullDownRefresh();
+      this.setData({ refreshing: false });
+    });
+  },
+
+  // 触底加载更多
+  onReachBottom() {
+    if (this.data.activeTab === 'concerts' && this.data.hasMore && !this.data.loading) {
+      this.loadMoreConcerts();
+    }
+  },
+
+  // 加载数据
+  async loadData() {
+    const { activeTab } = this.data;
+    if (activeTab === 'concerts') {
+      await this.loadSubscribedConcerts();
+    } else {
+      await this.loadFollowingArtists();
+    }
+  },
+
+  // 加载订阅的演唱会
+  async loadSubscribedConcerts() {
+    this.setData({ loading: true });
+
+    try {
+      const result = await api.getSubscriptions(1, PAGE_SIZE);
+      this.setData({
+        concerts: result.list || [],
+        page: 1,
+        hasMore: (result.list || []).length >= PAGE_SIZE
+      });
+    } catch (err) {
+      console.error('加载订阅失败:', err);
+      showToast('加载失败');
+    } finally {
+      this.setData({ loading: false });
+    }
+  },
+
+  // 加载更多订阅的演唱会
+  async loadMoreConcerts() {
+    const { page, concerts } = this.data;
+    this.setData({ loading: true });
+
+    try {
+      const result = await api.getSubscriptions(page + 1, PAGE_SIZE);
+      const newList = result.list || [];
+      this.setData({
+        concerts: [...concerts, ...newList],
+        page: page + 1,
+        hasMore: newList.length >= PAGE_SIZE
+      });
+    } catch (err) {
+      console.error('加载更多失败:', err);
+      showToast('加载失败');
+    } finally {
+      this.setData({ loading: false });
+    }
+  },
+
+  // 加载关注的艺人
+  async loadFollowingArtists() {
+    this.setData({ loading: true });
+
+    try {
+      const artists = await api.getFollowingArtists();
+      this.setData({ artists: artists || [] });
+    } catch (err) {
+      console.error('加载关注艺人失败:', err);
+      showToast('加载失败');
+    } finally {
+      this.setData({ loading: false });
+    }
+  },
+
+  // 切换标签
+  onSwitchTab(e) {
+    const tab = e.currentTarget.dataset.tab;
+    if (tab !== this.data.activeTab) {
+      this.setData({
+        activeTab: tab,
+        page: 1,
+        hasMore: true
+      });
+      this.loadData();
+    }
+  },
+
+  // 取消订阅演唱会
+  async onCancelSubscribe(e) {
+    const { concert } = e.detail;
+
+    try {
+      await api.subscribeConcert(concert._id, false);
+
+      // 从列表中移除
+      const concerts = this.data.concerts.filter(item => item._id !== concert._id);
+      this.setData({ concerts });
+
+      showToast('已取消订阅');
+    } catch (err) {
+      console.error('取消订阅失败:', err);
+      showToast('操作失败');
+    }
+  },
+
+  // 取消关注艺人
+  async onUnfollowArtist(e) {
+    const { artistId } = e.currentTarget.dataset;
+
+    try {
+      await api.followArtist(artistId, false);
+
+      // 从列表中移除
+      const artists = this.data.artists.filter(item => item._id !== artistId);
+      this.setData({ artists });
+
+      showToast('已取消关注');
+    } catch (err) {
+      console.error('取消关注失败:', err);
+      showToast('操作失败');
+    }
+  },
+
+  // 查看艺人演唱会
+  onTapArtist(e) {
+    const { artistId, name } = e.currentTarget.dataset;
+    wx.navigateTo({
+      url: `/pages/search/search?keyword=${name}`
+    });
+  }
+});

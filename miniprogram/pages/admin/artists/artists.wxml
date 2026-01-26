@@ -1,0 +1,107 @@
+<!-- pages/admin/artists/artists.wxml -->
+<view class="container">
+  <!-- 艺人列表 -->
+  <view class="artist-list">
+    <view
+      wx:for="{{artists}}"
+      wx:key="_id"
+      class="artist-item"
+    >
+      <view class="artist-content" data-artist="{{item}}" bindtap="onEditArtist">
+        <image
+          class="artist-avatar"
+          src="{{item.avatar || '/images/default-avatar.png'}}"
+          mode="aspectFill"
+        />
+        <view class="artist-info">
+          <view class="artist-name">{{item.name}}</view>
+          <view class="artist-alias" wx:if="{{item.alias && item.alias.length > 0}}">
+            别名: {{item.alias[0]}}{{item.alias.length > 1 ? '等' : ''}}
+          </view>
+          <view class="artist-stats">
+            <text>关注: {{item.followerCount || 0}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="artist-actions">
+        <view
+          class="action-edit"
+          data-artist="{{item}}"
+          bindtap="onEditArtist"
+        >
+          编辑
+        </view>
+        <view
+          class="action-delete"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+          bindtap="onDeleteArtist"
+        >
+          删除
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && artists.length === 0}}" class="empty-state">
+      <image src="/images/empty-artist.png" mode="aspectFit" />
+      <text>暂无艺人数据</text>
+      <text class="empty-tip">点击下方按钮添加</text>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-btn" bindtap="onShowAddModal">
+    <text>+</text>
+  </view>
+
+  <!-- 新增/编辑弹窗 -->
+  <view wx:if="{{showAddModal}}" class="modal-mask" bindtap="onCloseModal">
+    <view class="modal-content" catchtap="onStopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">{{editingArtist ? '编辑艺人' : '新增艺人'}}</text>
+        <view class="modal-close" bindtap="onCloseModal">×</view>
+      </view>
+
+      <view class="modal-body">
+        <!-- 头像 -->
+        <view class="avatar-section" bindtap="onChooseAvatar">
+          <image
+            class="avatar-preview"
+            src="{{formData.avatar || '/images/default-avatar.png'}}"
+            mode="aspectFill"
+          />
+          <view class="avatar-tip">点击更换头像</view>
+        </view>
+
+        <!-- 艺人名称 -->
+        <view class="form-item">
+          <text class="form-label">艺人名称</text>
+          <input
+            class="form-input"
+            placeholder="请输入艺人名称"
+            value="{{formData.name}}"
+            bindinput="onInputName"
+          />
+        </view>
+
+        <!-- 别名 -->
+        <view class="form-item">
+          <text class="form-label">别名</text>
+          <input
+            class="form-input"
+            placeholder="多个别名用逗号分隔"
+            value="{{formData.alias}}"
+            bindinput="onInputAlias"
+          />
+          <text class="form-hint">如: Jay、杰伦、周董</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="onCloseModal">取消</button>
+        <button class="btn-confirm" bindtap="onSaveArtist">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

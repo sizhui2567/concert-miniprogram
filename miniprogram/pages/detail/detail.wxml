@@ -1,0 +1,125 @@
+<!-- pages/detail/detail.wxml -->
+<view class="container" wx:if="{{!loading && concert}}">
+  <!-- 海报 -->
+  <view class="poster-section" bindtap="onPreviewPoster">
+    <image
+      class="poster"
+      src="{{concert.poster || '/images/default-poster.png'}}"
+      mode="aspectFill"
+    />
+    <view class="poster-overlay">
+      <stage-tag stage="{{concert.stage}}" size="large" />
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="info-section card">
+    <view class="title">{{concert.title}}</view>
+    <view class="artist" wx:if="{{concert.artist}}">
+      <text class="label">艺人:</text>
+      <text class="value">{{concert.artist}}</text>
+    </view>
+    <view class="info-row">
+      <text class="icon">📍</text>
+      <text class="text">{{concert.city}} · {{concert.venue}}</text>
+    </view>
+    <view class="info-row">
+      <text class="icon">📅</text>
+      <text class="text">{{concert.dateDisplay}}</text>
+    </view>
+    <view class="info-row" wx:if="{{concert.priceRange}}">
+      <text class="icon">💰</text>
+      <text class="text price">¥{{concert.priceRange}}</text>
+    </view>
+
+    <!-- 演出日期详情 -->
+    <view class="dates-detail" wx:if="{{concert.datesFormatted && concert.datesFormatted.length > 1}}">
+      <view class="dates-title">演出日期</view>
+      <view class="dates-list">
+        <view class="date-item" wx:for="{{concert.datesFormatted}}" wx:key="*this">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 购票平台 -->
+  <view class="platforms-section card">
+    <view class="section-title">购票平台</view>
+    <view class="platform-list">
+      <view
+        wx:for="{{platformList}}"
+        wx:key="*this"
+        class="platform-item {{concert.platforms[item] && concert.platforms[item].available ? 'available' : 'unavailable'}}"
+        data-platform="{{item}}"
+        bindtap="onTapPlatform"
+      >
+        <image class="platform-icon" src="{{platforms[item].icon}}" mode="aspectFit" />
+        <view class="platform-info">
+          <text class="platform-name">{{platforms[item].name}}</text>
+          <text class="platform-status" wx:if="{{concert.platforms[item] && concert.platforms[item].available}}">
+            {{concert.platforms[item].openTime ? '开售时间: ' + concert.platforms[item].openTime : '已开售'}}
+          </text>
+          <text class="platform-status unavailable" wx:else>暂未开售</text>
+        </view>
+        <view class="platform-action" wx:if="{{concert.platforms[item] && concert.platforms[item].available}}">
+          <text class="action-text">复制链接</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 阶段时间线 -->
+  <view class="timeline-section card" wx:if="{{concert.stageHistory && concert.stageHistory.length > 0}}">
+    <view class="section-title">阶段变更</view>
+    <view class="timeline">
+      <view
+        wx:for="{{concert.stageHistory}}"
+        wx:key="index"
+        class="timeline-item"
+      >
+        <view class="timeline-dot" style="background-color: {{stageColors[item.stage] || '#999'}}"></view>
+        <view class="timeline-content">
+          <view class="timeline-stage" style="color: {{stageColors[item.stage] || '#999'}}">{{item.stage}}</view>
+          <view class="timeline-time">{{item.timeFormatted}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 相关演唱会 -->
+  <view class="related-section" wx:if="{{relatedConcerts.length > 0}}">
+    <view class="section-title">相关演唱会</view>
+    <scroll-view class="related-list" scroll-x enable-flex>
+      <view
+        wx:for="{{relatedConcerts}}"
+        wx:key="_id"
+        class="related-item card"
+        data-id="{{item._id}}"
+        bindtap="onTapRelated"
+      >
+        <image class="related-poster" src="{{item.poster || '/images/default-poster.png'}}" mode="aspectFill" />
+        <view class="related-info">
+          <view class="related-title ellipsis">{{item.title}}</view>
+          <view class="related-city">{{item.city}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar safe-area-bottom">
+    <button class="btn-subscribe {{concert.subscribed ? 'subscribed' : ''}}" bindtap="onToggleSubscribe">
+      {{concert.subscribed ? '已追更' : '追更订阅'}}
+    </button>
+    <button class="btn-share" open-type="share">
+      分享
+    </button>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view wx:if="{{loading}}" class="loading-state">
+  <view class="loading-spinner"></view>
+  <text>加载中...</text>
+</view>

@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "stage-tag": "../stage-tag/stage-tag",
+    "platform-icons": "../platform-icons/platform-icons"
+  }
+}

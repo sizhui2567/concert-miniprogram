@@ -1,0 +1,20 @@
+<!-- components/platform-icons/platform-icons.wxml -->
+<view class="platform-icons {{size}}">
+  <view
+    wx:for="{{platformList}}"
+    wx:key="*this"
+    class="platform-item {{platforms[item] && platforms[item].available ? 'active' : 'inactive'}}"
+    data-platform="{{item}}"
+    bindtap="onTapPlatform"
+  >
+    <view class="platform-icon-wrapper">
+      <image
+        class="platform-icon"
+        src="{{platformInfo[item].icon}}"
+        mode="aspectFit"
+      />
+      <view class="status-dot {{platforms[item] && platforms[item].available ? 'available' : ''}}"></view>
+    </view>
+    <text class="platform-name">{{platformInfo[item].name}}</text>
+  </view>
+</view>

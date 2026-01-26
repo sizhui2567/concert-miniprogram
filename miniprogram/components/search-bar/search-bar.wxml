@@ -1,0 +1,28 @@
+<!-- components/search-bar/search-bar.wxml -->
+<view class="search-bar" bindtap="onTapSearchBar">
+  <view class="search-bar-inner">
+    <image class="search-icon" src="/images/icon-search.png" mode="aspectFit" />
+    <input
+      wx:if="{{!disabled}}"
+      class="search-input"
+      type="text"
+      placeholder="{{placeholder}}"
+      placeholder-class="placeholder"
+      value="{{inputValue}}"
+      focus="{{focus}}"
+      confirm-type="search"
+      bindinput="onInput"
+      bindfocus="onFocus"
+      bindblur="onBlur"
+      bindconfirm="onConfirm"
+    />
+    <view wx:else class="search-placeholder">{{placeholder}}</view>
+    <view
+      wx:if="{{inputValue && !disabled}}"
+      class="clear-btn"
+      catchtap="onClear"
+    >
+      <image class="clear-icon" src="/images/icon-clear.png" mode="aspectFit" />
+    </view>
+  </view>
+</view>

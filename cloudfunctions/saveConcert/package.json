@@ -1,0 +1,9 @@
+{
+  "name": "saveConcert",
+  "version": "1.0.0",
+  "description": "保存演唱会（新增/更新）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

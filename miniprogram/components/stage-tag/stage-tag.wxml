@@ -1,0 +1,7 @@
+<!-- components/stage-tag/stage-tag.wxml -->
+<view
+  class="stage-tag {{size}}"
+  style="background-color: {{stageBgColor}}; color: {{stageColor}}; border-color: {{stageColor}};"
+>
+  {{stage}}
+</view>

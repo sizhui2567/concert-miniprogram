@@ -1,0 +1,144 @@
+<!-- pages/search/search.wxml -->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-header">
+    <view class="search-bar-wrapper">
+      <search-bar
+        placeholder="搜索艺人、演唱会..."
+        value="{{keyword}}"
+        focus="{{true}}"
+        bind:search="onSearch"
+        bind:confirm="onConfirmSearch"
+      />
+    </view>
+    <view class="filter-btn" bindtap="onToggleFilter">
+      <image src="/images/icon-filter.png" mode="aspectFit" />
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <!-- 筛选面板 -->
+  <view class="filter-panel {{showFilter ? 'show' : ''}}">
+    <!-- 城市筛选 -->
+    <view class="filter-section">
+      <view class="filter-title">城市</view>
+      <view class="filter-options">
+        <view
+          wx:for="{{hotCities}}"
+          wx:key="*this"
+          class="filter-option {{selectedCity === item ? 'active' : ''}}"
+          data-city="{{item}}"
+          bindtap="onSelectCity"
+        >
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 阶段筛选 -->
+    <view class="filter-section">
+      <view class="filter-title">阶段</view>
+      <view class="filter-options">
+        <view
+          wx:for="{{stages}}"
+          wx:key="*this"
+          class="filter-option {{selectedStage === item ? 'active' : ''}}"
+          data-stage="{{item}}"
+          bindtap="onSelectStage"
+        >
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 排序 -->
+    <view class="filter-section">
+      <view class="filter-title">排序</view>
+      <view class="filter-options">
+        <view
+          class="filter-option {{sortBy === 'date' ? 'active' : ''}}"
+          data-sort="date"
+          bindtap="onChangeSort"
+        >
+          按日期
+        </view>
+        <view
+          class="filter-option {{sortBy === 'hot' ? 'active' : ''}}"
+          data-sort="hot"
+          bindtap="onChangeSort"
+        >
+          按热度
+        </view>
+      </view>
+    </view>
+
+    <!-- 重置按钮 -->
+    <view class="filter-actions">
+      <button class="btn-reset" bindtap="onResetFilter">重置筛选</button>
+    </view>
+  </view>
+
+  <!-- 搜索历史（未搜索时显示） -->
+  <view wx:if="{{!keyword && concerts.length === 0 && searchHistory.length > 0}}" class="search-history">
+    <view class="history-header">
+      <text class="history-title">搜索历史</text>
+      <text class="history-clear" bindtap="onClearHistory">清空</text>
+    </view>
+    <view class="history-list">
+      <view
+        wx:for="{{searchHistory}}"
+        wx:key="*this"
+        class="history-item"
+        data-keyword="{{item}}"
+        bindtap="onTapHistory"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门搜索（未搜索时显示） -->
+  <view wx:if="{{!keyword && concerts.length === 0}}" class="hot-search">
+    <view class="hot-title">热门城市</view>
+    <view class="hot-list">
+      <view
+        wx:for="{{hotCities}}"
+        wx:key="*this"
+        class="hot-item"
+        data-keyword="{{item}}"
+        bindtap="onTapHistory"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{keyword || concerts.length > 0}}" class="search-results">
+    <view wx:if="{{concerts.length > 0}}" class="results-count">
+      共找到 {{concerts.length}} 场演唱会
+    </view>
+
+    <view class="concert-list">
+      <concert-card
+        wx:for="{{concerts}}"
+        wx:key="_id"
+        concert="{{item}}"
+        bind:subscribe="onSubscribe"
+      />
+    </view>
+
+    <!-- 空结果 -->
+    <view wx:if="{{!loading && concerts.length === 0 && keyword}}" class="empty-state">
+      <image src="/images/empty-search.png" mode="aspectFit" />
+      <text>未找到相关演唱会</text>
+      <text class="empty-tip">换个关键词试试吧</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="load-more">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore && concerts.length > 0}}">没有更多了</text>
+    </view>
+  </view>
+</view>

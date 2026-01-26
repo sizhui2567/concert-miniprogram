@@ -1,0 +1,9 @@
+{
+  "name": "crawlerTask",
+  "version": "1.0.0",
+  "description": "爬虫定时任务",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

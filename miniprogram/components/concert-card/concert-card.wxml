@@ -1,0 +1,60 @@
+<!-- components/concert-card/concert-card.wxml -->
+<view class="concert-card card card-float" bindtap="onTapCard">
+  <!-- 海报图 -->
+  <view class="poster-wrapper">
+    <image
+      class="poster"
+      src="{{concert.poster || '/images/default-poster.png'}}"
+      mode="aspectFill"
+      lazy-load
+    />
+    <!-- 阶段标签（浮动在海报上） -->
+    <view class="stage-badge">
+      <stage-tag stage="{{concert.stage}}" />
+    </view>
+  </view>
+
+  <!-- 演唱会信息 -->
+  <view class="info-wrapper">
+    <!-- 标题 -->
+    <view class="title ellipsis-2">{{concert.title}}</view>
+
+    <!-- 地点 -->
+    <view class="location">
+      <text class="icon">📍</text>
+      <text class="text">{{concert.city}} · {{concert.venue}}</text>
+    </view>
+
+    <!-- 日期 -->
+    <view class="date">
+      <text class="icon">📅</text>
+      <text class="text">{{dateRange}}</text>
+    </view>
+
+    <!-- 平台图标 -->
+    <view class="platforms-wrapper">
+      <platform-icons platforms="{{concert.platforms}}" bind:tap-platform="onTapPlatform" />
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="action-bar">
+      <view class="price" wx:if="{{concert.priceRange}}">
+        <text class="price-label">¥</text>
+        <text class="price-value">{{concert.priceRange}}</text>
+      </view>
+      <view class="flex-1"></view>
+      <view class="btn-group">
+        <button
+          wx:if="{{showSubscribe}}"
+          class="btn-subscribe {{concert.subscribed ? 'subscribed' : ''}}"
+          catchtap="onTapSubscribe"
+        >
+          {{concert.subscribed ? '已追更' : '追更'}}
+        </button>
+        <button class="btn-detail" catchtap="onTapCard">
+          查看详情
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

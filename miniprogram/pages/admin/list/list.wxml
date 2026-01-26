@@ -1,0 +1,110 @@
+<!-- pages/admin/list/list.wxml -->
+<view class="container">
+  <!-- 顶部操作栏 -->
+  <view class="toolbar">
+    <view class="search-wrapper">
+      <search-bar
+        placeholder="搜索演唱会..."
+        bind:confirm="onSearch"
+      />
+    </view>
+    <view class="toolbar-actions">
+      <view class="action-btn" bindtap="onGoArtists">
+        <image src="/images/icon-artist.png" mode="aspectFit" />
+        <text>艺人</text>
+      </view>
+      <view class="action-btn logout" bindtap="onLogout">
+        <image src="/images/icon-logout.png" mode="aspectFit" />
+        <text>退出</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 阶段筛选 -->
+  <scroll-view class="stage-filter" scroll-x enable-flex>
+    <view
+      class="stage-item {{selectedStage === '' ? 'active' : ''}}"
+      data-stage=""
+      bindtap="onSelectStage"
+    >
+      全部
+    </view>
+    <view
+      wx:for="{{stages}}"
+      wx:key="*this"
+      class="stage-item {{selectedStage === item ? 'active' : ''}}"
+      data-stage="{{item}}"
+      bindtap="onSelectStage"
+    >
+      {{item}}
+    </view>
+  </scroll-view>
+
+  <!-- 演唱会列表 -->
+  <view class="concert-list">
+    <view
+      wx:for="{{concerts}}"
+      wx:key="_id"
+      class="concert-item"
+    >
+      <view class="concert-content" data-id="{{item._id}}" bindtap="onEditConcert">
+        <image
+          class="concert-poster"
+          src="{{item.poster || '/images/default-poster.png'}}"
+          mode="aspectFill"
+        />
+        <view class="concert-info">
+          <view class="concert-title ellipsis">{{item.title}}</view>
+          <view class="concert-meta">
+            <text>{{item.city}}</text>
+            <text class="dot">·</text>
+            <text>{{item.artist}}</text>
+          </view>
+          <view class="concert-bottom">
+            <stage-tag stage="{{item.stage}}" size="small" />
+            <text class="update-time">{{item.updateTimeFormatted}}</text>
+          </view>
+          <view class="concert-status">
+            <text wx:if="{{item.status === 'draft'}}" class="status-draft">草稿</text>
+            <text wx:if="{{!item.verified}}" class="status-unverified">待审核</text>
+          </view>
+        </view>
+      </view>
+      <view class="concert-actions">
+        <view
+          class="action-edit"
+          data-id="{{item._id}}"
+          bindtap="onEditConcert"
+        >
+          编辑
+        </view>
+        <view
+          class="action-delete"
+          data-id="{{item._id}}"
+          data-title="{{item.title}}"
+          bindtap="onDeleteConcert"
+        >
+          删除
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:if="{{!loading && concerts.length === 0}}" class="empty-state">
+      <image src="/images/empty.png" mode="aspectFit" />
+      <text>暂无演唱会数据</text>
+      <text class="empty-tip">点击下方按钮添加</text>
+    </view>
+
+    <!-- 加载更多 -->
+    <view wx:if="{{concerts.length > 0}}" class="load-more">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore}}">没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-btn" bindtap="onAddConcert">
+    <text>+</text>
+  </view>
+</view>

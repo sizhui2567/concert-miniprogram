@@ -1,0 +1,256 @@
+{
+  "concerts": [
+    {
+      "title": "周杰伦嘉年华世界巡回演唱会-上海站",
+      "artist": "周杰伦",
+      "artistId": "artist_001",
+      "city": "上海",
+      "venue": "上海体育场",
+      "province": "上海市",
+      "dates": ["2026-03-15", "2026-03-16"],
+      "stage": "二开",
+      "platforms": {
+        "damai": {
+          "available": true,
+          "url": "https://detail.damai.cn/item.htm?id=xxx",
+          "openTime": "2026-01-26 10:00"
+        },
+        "maoyan": {
+          "available": true,
+          "url": "https://show.maoyan.com/xxx",
+          "openTime": "2026-01-26 10:00"
+        },
+        "douyin": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        },
+        "xiecheng": {
+          "available": true,
+          "url": "https://piao.ctrip.com/xxx",
+          "openTime": ""
+        },
+        "piaoxingqiu": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        }
+      },
+      "priceRange": "380-1880",
+      "poster": "https://img.example.com/poster1.jpg"
+    },
+    {
+      "title": "林俊杰JJ20世界巡回演唱会-北京站",
+      "artist": "林俊杰",
+      "artistId": "artist_002",
+      "city": "北京",
+      "venue": "国家体育场（鸟巢）",
+      "province": "北京市",
+      "dates": ["2026-04-20", "2026-04-21"],
+      "stage": "一开",
+      "platforms": {
+        "damai": {
+          "available": true,
+          "url": "https://detail.damai.cn/item.htm?id=xxx",
+          "openTime": "2026-01-27 14:00"
+        },
+        "maoyan": {
+          "available": true,
+          "url": "https://show.maoyan.com/xxx",
+          "openTime": ""
+        },
+        "douyin": {
+          "available": true,
+          "url": "https://www.douyin.com/xxx",
+          "openTime": ""
+        },
+        "xiecheng": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        },
+        "piaoxingqiu": {
+          "available": true,
+          "url": "https://www.piaoxingqiu.com/xxx",
+          "openTime": ""
+        }
+      },
+      "priceRange": "480-2080",
+      "poster": "https://img.example.com/poster2.jpg"
+    },
+    {
+      "title": "陈奕迅FEAR AND DREAMS世界巡回演唱会-广州站",
+      "artist": "陈奕迅",
+      "artistId": "artist_003",
+      "city": "广州",
+      "venue": "广州天河体育中心",
+      "province": "广东省",
+      "dates": ["2026-05-01", "2026-05-02", "2026-05-03"],
+      "stage": "上架",
+      "platforms": {
+        "damai": {
+          "available": false,
+          "url": "",
+          "openTime": "2026-02-01 10:00"
+        },
+        "maoyan": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        },
+        "douyin": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        },
+        "xiecheng": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        },
+        "piaoxingqiu": {
+          "available": false,
+          "url": "",
+          "openTime": ""
+        }
+      },
+      "priceRange": "待定",
+      "poster": ""
+    },
+    {
+      "title": "薛之谦天外来物巡回演唱会-成都站",
+      "artist": "薛之谦",
+      "artistId": "artist_004",
+      "city": "成都",
+      "venue": "成都露天音乐公园",
+      "province": "四川省",
+      "dates": ["2026-02-14", "2026-02-15"],
+      "stage": "三开",
+      "platforms": {
+        "damai": {
+          "available": true,
+          "url": "https://detail.damai.cn/item.htm?id=xxx",
+          "openTime": ""
+        },
+        "maoyan": {
+          "available": true,
+          "url": "https://show.maoyan.com/xxx",
+          "openTime": ""
+        },
+        "douyin": {
+          "available": true,
+          "url": "https://www.douyin.com/xxx",
+          "openTime": ""
+        },
+        "xiecheng": {
+          "available": true,
+          "url": "https://piao.ctrip.com/xxx",
+          "openTime": ""
+        },
+        "piaoxingqiu": {
+          "available": true,
+          "url": "https://www.piaoxingqiu.com/xxx",
+          "openTime": ""
+        }
+      },
+      "priceRange": "299-1299",
+      "poster": "https://img.example.com/poster3.jpg"
+    },
+    {
+      "title": "五月天诺亚方舟10周年演唱会-深圳站",
+      "artist": "五月天",
+      "artistId": "artist_005",
+      "city": "深圳",
+      "venue": "深圳湾体育中心",
+      "province": "广东省",
+      "dates": ["2026-06-06", "2026-06-07", "2026-06-08"],
+      "stage": "网传",
+      "platforms": {
+        "damai": { "available": false, "url": "", "openTime": "" },
+        "maoyan": { "available": false, "url": "", "openTime": "" },
+        "douyin": { "available": false, "url": "", "openTime": "" },
+        "xiecheng": { "available": false, "url": "", "openTime": "" },
+        "piaoxingqiu": { "available": false, "url": "", "openTime": "" }
+      },
+      "priceRange": "",
+      "poster": ""
+    },
+    {
+      "title": "张学友60+巡回演唱会-南京站",
+      "artist": "张学友",
+      "artistId": "artist_006",
+      "city": "南京",
+      "venue": "南京奥体中心体育场",
+      "province": "江苏省",
+      "dates": ["2026-03-28", "2026-03-29"],
+      "stage": "一开",
+      "platforms": {
+        "damai": {
+          "available": true,
+          "url": "https://detail.damai.cn/item.htm?id=xxx",
+          "openTime": "2026-01-28 10:00"
+        },
+        "maoyan": {
+          "available": true,
+          "url": "https://show.maoyan.com/xxx",
+          "openTime": ""
+        },
+        "douyin": { "available": false, "url": "", "openTime": "" },
+        "xiecheng": {
+          "available": true,
+          "url": "https://piao.ctrip.com/xxx",
+          "openTime": ""
+        },
+        "piaoxingqiu": { "available": false, "url": "", "openTime": "" }
+      },
+      "priceRange": "580-2280",
+      "poster": "https://img.example.com/poster4.jpg"
+    },
+    {
+      "title": "邓紫棋启示录世界巡回演唱会-武汉站",
+      "artist": "邓紫棋",
+      "artistId": "artist_007",
+      "city": "武汉",
+      "venue": "武汉体育中心",
+      "province": "湖北省",
+      "dates": ["2026-04-12"],
+      "stage": "上架",
+      "platforms": {
+        "damai": {
+          "available": false,
+          "url": "",
+          "openTime": "2026-01-28 10:00"
+        },
+        "maoyan": { "available": false, "url": "", "openTime": "" },
+        "douyin": { "available": false, "url": "", "openTime": "" },
+        "xiecheng": { "available": false, "url": "", "openTime": "" },
+        "piaoxingqiu": { "available": false, "url": "", "openTime": "" }
+      },
+      "priceRange": "388-1588",
+      "poster": ""
+    },
+    {
+      "title": "周杰伦嘉年华世界巡回演唱会-杭州站",
+      "artist": "周杰伦",
+      "artistId": "artist_001",
+      "city": "杭州",
+      "venue": "杭州奥体中心体育场",
+      "province": "浙江省",
+      "dates": ["2026-04-05", "2026-04-06"],
+      "stage": "一开",
+      "platforms": {
+        "damai": {
+          "available": true,
+          "url": "https://detail.damai.cn/item.htm?id=xxx",
+          "openTime": "2026-01-27 12:00"
+        },
+        "maoyan": { "available": false, "url": "", "openTime": "" },
+        "douyin": { "available": false, "url": "", "openTime": "" },
+        "xiecheng": { "available": false, "url": "", "openTime": "" },
+        "piaoxingqiu": { "available": false, "url": "", "openTime": "" }
+      },
+      "priceRange": "380-1880",
+      "poster": "https://img.example.com/poster5.jpg"
+    }
+  ]
+}

@@ -1,0 +1,330 @@
+/* pages/index/index.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 搜索头部 */
+.search-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  padding: 20rpx 24rpx 24rpx;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background-color: #fff;
+  border-radius: 36rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  opacity: 0.5;
+}
+
+.search-input {
+  flex: 1;
+  height: 100%;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.search-placeholder {
+  color: #999;
+}
+
+.search-clear {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-clear image {
+  width: 32rpx;
+  height: 32rpx;
+  opacity: 0.4;
+}
+
+/* 城市筛选 */
+.city-filter {
+  display: flex;
+  white-space: nowrap;
+  padding: 20rpx 10rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.city-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 28rpx;
+  margin: 0 10rpx;
+  font-size: 26rpx;
+  color: #666;
+  background-color: #f5f5f5;
+  border-radius: 30rpx;
+  flex-shrink: 0;
+}
+
+.city-item.active {
+  color: #fff;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+}
+
+/* 搜索提示 */
+.search-tips {
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  color: #999;
+  background-color: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 演唱会列表 */
+.concert-list {
+  padding: 16rpx;
+}
+
+/* 横向浮动卡片样式 */
+.concert-card-horizontal {
+  display: flex;
+  position: relative;
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.concert-card-horizontal:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+/* 左侧海报 */
+.card-poster {
+  position: relative;
+  width: 220rpx;
+  height: 280rpx;
+  flex-shrink: 0;
+}
+
+.card-poster image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 海报占位符 */
+.poster-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.poster-placeholder text {
+  font-size: 80rpx;
+}
+
+/* 阶段标签 */
+.stage-badge {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  padding: 6rpx 14rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #fff;
+  border-radius: 6rpx;
+}
+
+.stage-badge.stage-网传 { background-color: #999; }
+.stage-badge.stage-上架 { background-color: #3498db; }
+.stage-badge.stage-一开 { background-color: #e67e22; }
+.stage-badge.stage-二开 { background-color: #e74c3c; }
+.stage-badge.stage-三开 { background-color: #9b59b6; }
+.stage-badge.stage-已结束 { background-color: #7f8c8d; }
+
+/* 右侧信息 */
+.card-info {
+  flex: 1;
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 8rpx;
+}
+
+.card-artist {
+  margin-bottom: 12rpx;
+}
+
+.artist-name {
+  font-size: 26rpx;
+  color: #FF6B6B;
+  font-weight: 500;
+}
+
+.card-meta {
+  margin-bottom: 12rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+  color: #888;
+  margin-bottom: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta-icon {
+  margin-right: 6rpx;
+  font-size: 20rpx;
+}
+
+/* 预售时间 */
+.card-presale {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 12rpx;
+  background-color: #FFF5F5;
+  border-radius: 6rpx;
+  margin-bottom: 12rpx;
+}
+
+.presale-label {
+  font-size: 20rpx;
+  color: #999;
+}
+
+.presale-time {
+  font-size: 22rpx;
+  color: #FF6B6B;
+  font-weight: 500;
+}
+
+/* 底部：平台和价格 */
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.platform-dots {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: #ddd;
+}
+
+.dot.active {
+  background-color: #4CD964;
+}
+
+.card-price {
+  display: flex;
+  align-items: baseline;
+}
+
+.price-symbol {
+  font-size: 20rpx;
+  color: #FF6B6B;
+}
+
+.price-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #FF6B6B;
+}
+
+/* 订阅按钮 */
+.subscribe-btn {
+  position: absolute;
+  right: 20rpx;
+  bottom: 20rpx;
+  padding: 10rpx 20rpx;
+  font-size: 22rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  border-radius: 20rpx;
+  z-index: 10;
+}
+
+.subscribe-btn.subscribed {
+  background: #e0e0e0;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 150rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.6;
+}
+
+.empty-state image {
+  width: 240rpx;
+  height: 240rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.6;
+}
+
+.empty-state text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 加载更多 */
+.load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 0 50rpx;
+}
+
+.load-more text {
+  font-size: 26rpx;
+  color: #999;
+}

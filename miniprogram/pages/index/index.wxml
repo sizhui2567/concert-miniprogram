@@ -1,0 +1,141 @@
+<view>
+  <text>测试初始化数据库：</text>
+  <view>
+    <text>初始化结果：</text>
+    <text>{{initResult}}</text>
+  </view>
+</view>
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 搜索栏 - 支持实时搜索 -->
+  <view class="search-header">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="搜索艺人、演唱会..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+      <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="onClearSearch">
+        <text>✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 城市筛选 -->
+  <scroll-view class="city-filter" scroll-x enable-flex>
+    <view
+      wx:for="{{hotCities}}"
+      wx:key="*this"
+      class="city-item {{selectedCity === item ? 'active' : ''}}"
+      data-city="{{item}}"
+      bindtap="onSelectCity"
+    >
+      {{item}}
+    </view>
+  </scroll-view>
+
+  <!-- 搜索结果提示 -->
+  <view wx:if="{{searchKeyword}}" class="search-tips">
+    搜索 "{{searchKeyword}}" 的结果：{{concerts.length}} 场演唱会
+  </view>
+
+  <!-- 演唱会列表 - 横向浮动卡片 -->
+  <view class="concert-list">
+    <block wx:if="{{concerts.length > 0}}">
+      <view
+        wx:for="{{concerts}}"
+        wx:key="_id"
+        class="concert-card-horizontal"
+        data-id="{{item._id}}"
+        bindtap="onTapConcert"
+      >
+        <!-- 左侧海报图 -->
+        <view class="card-poster">
+          <image
+            wx:if="{{item.poster}}"
+            src="{{item.poster}}"
+            mode="aspectFill"
+            lazy-load
+          />
+          <view wx:else class="poster-placeholder">
+            <text>🎤</text>
+          </view>
+          <!-- 阶段标签 -->
+          <view class="stage-badge stage-{{item.stage}}">{{item.stage}}</view>
+        </view>
+
+        <!-- 右侧信息 -->
+        <view class="card-info">
+          <!-- 标题 -->
+          <view class="card-title">{{item.title}}</view>
+
+          <!-- 艺人 -->
+          <view class="card-artist">
+            <text class="artist-name">{{item.artist}}</text>
+          </view>
+
+          <!-- 地点和日期 -->
+          <view class="card-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text>{{item.city}} · {{item.venue}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">📅</text>
+              <text>{{item.dates[0]}}{{item.dates.length > 1 ? ' 起' : ''}}</text>
+            </view>
+          </view>
+
+          <!-- 预售时间 -->
+          <view class="card-presale" wx:if="{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}">
+            <text class="presale-label">预售时间：</text>
+            <text class="presale-time">{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}</text>
+          </view>
+
+          <!-- 平台和价格 -->
+          <view class="card-bottom">
+            <view class="platform-dots">
+              <view class="dot {{item.platforms.damai.available ? 'active' : ''}}" data-name="大麦"></view>
+              <view class="dot {{item.platforms.maoyan.available ? 'active' : ''}}" data-name="猫眼"></view>
+              <view class="dot {{item.platforms.douyin.available ? 'active' : ''}}" data-name="抖音"></view>
+              <view class="dot {{item.platforms.xiecheng.available ? 'active' : ''}}" data-name="携程"></view>
+              <view class="dot {{item.platforms.piaoxingqiu.available ? 'active' : ''}}" data-name="票星球"></view>
+            </view>
+            <view class="card-price" wx:if="{{item.priceRange}}">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{item.priceRange}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 订阅按钮 -->
+        <view
+          class="subscribe-btn {{item.subscribed ? 'subscribed' : ''}}"
+          catchtap="onSubscribe"
+          data-concert="{{item}}"
+        >
+          {{item.subscribed ? '已订阅' : '订阅'}}
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!loading}}" class="empty-state">
+      <view class="empty-icon">📭</view>
+      <text wx:if="{{searchKeyword}}">未找到 "{{searchKeyword}}" 相关演唱会</text>
+      <text wx:else>暂无演唱会信息</text>
+    </view>
+
+    <!-- 加载更多 -->
+    <view wx:if="{{concerts.length > 0}}" class="load-more">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore}}">没有更多了</text>
+    </view>
+  </view>
+</view>

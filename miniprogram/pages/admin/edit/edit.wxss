@@ -1,0 +1,284 @@
+/* pages/admin/edit/edit.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 140rpx;
+}
+
+.form {
+  padding: 20rpx;
+}
+
+.form-section {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.form-item {
+  margin-bottom: 24rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+}
+
+.form-label.required::before {
+  content: '*';
+  color: #e74c3c;
+  margin-right: 4rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+.form-picker {
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  padding: 0 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+.form-picker text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-picker .placeholder {
+  color: #999;
+}
+
+.picker-arrow {
+  width: 24rpx;
+  height: 24rpx;
+  opacity: 0.4;
+}
+
+/* 日期选择 */
+.dates-wrapper {
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 16rpx;
+}
+
+.date-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.date-tag {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  background-color: #fff;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  color: #333;
+}
+
+.date-remove {
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  color: #999;
+}
+
+.add-date-btn {
+  display: inline-flex;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  color: #667eea;
+  background-color: rgba(102, 126, 234, 0.1);
+  border-radius: 6rpx;
+}
+
+/* 平台设置 */
+.platform-form-item {
+  margin-bottom: 24rpx;
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+}
+
+.platform-form-item:last-child {
+  margin-bottom: 0;
+}
+
+.platform-header {
+  display: flex;
+  align-items: center;
+}
+
+.platform-checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 6rpx;
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platform-checkbox.checked {
+  border-color: #667eea;
+  background-color: #667eea;
+}
+
+.platform-checkbox.checked .checkbox-inner {
+  width: 20rpx;
+  height: 12rpx;
+  border-left: 4rpx solid #fff;
+  border-bottom: 4rpx solid #fff;
+  transform: rotate(-45deg);
+  margin-bottom: 6rpx;
+}
+
+.platform-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.platform-fields {
+  margin-top: 16rpx;
+}
+
+.platform-input {
+  width: 100%;
+  height: 72rpx;
+  padding: 0 16rpx;
+  font-size: 26rpx;
+  color: #333;
+  background-color: #fff;
+  border-radius: 6rpx;
+  box-sizing: border-box;
+  margin-bottom: 12rpx;
+}
+
+.platform-input:last-child {
+  margin-bottom: 0;
+}
+
+/* 海报上传 */
+.poster-wrapper {
+  display: flex;
+}
+
+.poster-preview {
+  position: relative;
+  width: 240rpx;
+  height: 320rpx;
+}
+
+.poster-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+}
+
+.poster-remove {
+  position: absolute;
+  top: -16rpx;
+  right: -16rpx;
+  width: 48rpx;
+  height: 48rpx;
+  background-color: #e74c3c;
+  color: #fff;
+  font-size: 32rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 50%;
+}
+
+.poster-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 240rpx;
+  height: 320rpx;
+  background-color: #f5f5f5;
+  border-radius: 12rpx;
+  border: 2rpx dashed #ddd;
+}
+
+.upload-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.4;
+}
+
+.poster-upload text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 底部按钮 */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  gap: 20rpx;
+}
+
+.btn-draft,
+.btn-publish {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 30rpx;
+  border-radius: 44rpx;
+  border: none;
+  margin: 0;
+}
+
+.btn-draft {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-publish {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.btn-draft::after,
+.btn-publish::after {
+  border: none;
+}

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "演唱会详情",
+  "usingComponents": {
+    "stage-tag": "/components/stage-tag/stage-tag",
+    "platform-icons": "/components/platform-icons/platform-icons",
+    "concert-card": "/components/concert-card/concert-card"
+  }
+}

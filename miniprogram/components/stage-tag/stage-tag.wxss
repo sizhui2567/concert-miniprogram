@@ -1,0 +1,25 @@
+/* components/stage-tag/stage-tag.wxss */
+.stage-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  border: 1rpx solid;
+  white-space: nowrap;
+}
+
+/* 尺寸变体 */
+.stage-tag.small {
+  padding: 4rpx 12rpx;
+  font-size: 18rpx;
+  border-radius: 4rpx;
+}
+
+.stage-tag.large {
+  padding: 10rpx 24rpx;
+  font-size: 26rpx;
+  border-radius: 8rpx;
+}

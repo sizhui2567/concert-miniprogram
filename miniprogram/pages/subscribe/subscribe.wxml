@@ -1,0 +1,88 @@
+<!-- pages/subscribe/subscribe.wxml -->
+<view class="container">
+  <!-- 顶部标签栏 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{activeTab === 'concerts' ? 'active' : ''}}"
+      data-tab="concerts"
+      bindtap="onSwitchTab"
+    >
+      <text>订阅的演唱会</text>
+      <view class="tab-indicator" wx:if="{{activeTab === 'concerts'}}"></view>
+    </view>
+    <view
+      class="tab-item {{activeTab === 'artists' ? 'active' : ''}}"
+      data-tab="artists"
+      bindtap="onSwitchTab"
+    >
+      <text>关注的艺人</text>
+      <view class="tab-indicator" wx:if="{{activeTab === 'artists'}}"></view>
+    </view>
+  </view>
+
+  <!-- 演唱会列表 -->
+  <view wx:if="{{activeTab === 'concerts'}}" class="content-section">
+    <block wx:if="{{concerts.length > 0}}">
+      <concert-card
+        wx:for="{{concerts}}"
+        wx:key="_id"
+        concert="{{item}}"
+        bind:subscribe="onCancelSubscribe"
+      />
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!loading}}" class="empty-state">
+      <image src="/images/empty-subscribe.png" mode="aspectFit" />
+      <text>暂无订阅的演唱会</text>
+      <text class="empty-tip">去首页看看有哪些精彩演出吧</text>
+      <navigator url="/pages/index/index" open-type="switchTab" class="btn-explore">
+        去看看
+      </navigator>
+    </view>
+
+    <!-- 加载更多 -->
+    <view wx:if="{{concerts.length > 0}}" class="load-more">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{!hasMore}}">没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 艺人列表 -->
+  <view wx:if="{{activeTab === 'artists'}}" class="content-section">
+    <view wx:if="{{artists.length > 0}}" class="artist-list">
+      <view
+        wx:for="{{artists}}"
+        wx:key="_id"
+        class="artist-item card"
+        data-artist-id="{{item._id}}"
+        data-name="{{item.name}}"
+        bindtap="onTapArtist"
+      >
+        <image class="artist-avatar" src="{{item.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="artist-info">
+          <view class="artist-name">{{item.name}}</view>
+          <view class="artist-alias" wx:if="{{item.alias && item.alias.length > 0}}">
+            {{item.alias[0]}}
+          </view>
+        </view>
+        <view class="artist-actions">
+          <view
+            class="btn-unfollow"
+            data-artist-id="{{item._id}}"
+            catchtap="onUnfollowArtist"
+          >
+            取消关注
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{!loading}}" class="empty-state">
+      <image src="/images/empty-artist.png" mode="aspectFit" />
+      <text>暂无关注的艺人</text>
+      <text class="empty-tip">关注喜欢的艺人，第一时间获取演出信息</text>
+    </view>
+  </view>
+</view>
