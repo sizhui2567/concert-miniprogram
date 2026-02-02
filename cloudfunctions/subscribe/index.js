@@ -8,6 +8,13 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
+const DEFAULT_NOTIFICATION_PREFS = {
+  onListed: false,
+  oneDayBefore: false,
+  customHoursEnabled: true,
+  customHours: 1
+};
+
 exports.main = async (event, context) => {
   const { concertId, subscribe = true } = event;
   const { OPENID } = cloud.getWXContext();
@@ -39,6 +46,7 @@ exports.main = async (event, context) => {
           _id: OPENID,
           subscriptions: subscribe ? [concertId] : [],
           followArtists: [],
+          notificationPrefs: DEFAULT_NOTIFICATION_PREFS,
           createTime: new Date()
         }
       });
@@ -58,6 +66,16 @@ exports.main = async (event, context) => {
           .update({
             data: {
               subscriptions: _.pull(concertId)
+            }
+          });
+      }
+
+      if (!userResult.data[0].notificationPrefs) {
+        await db.collection('users')
+          .where({ _id: OPENID })
+          .update({
+            data: {
+              notificationPrefs: DEFAULT_NOTIFICATION_PREFS
             }
           });
       }

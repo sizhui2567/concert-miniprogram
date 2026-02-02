@@ -44,6 +44,56 @@
   padding: 10rpx 0 20rpx;
 }
 
+/* 通知设置 */
+.notify-settings {
+  margin: 20rpx;
+  padding: 20rpx;
+}
+
+.notify-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.notify-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.notify-custom {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.notify-input {
+  width: 120rpx;
+  height: 52rpx;
+  padding: 0 12rpx;
+  border: 1rpx solid #f0f0f0;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #333;
+  background-color: #fff;
+}
+
+.notify-unit {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.notify-tip {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #999;
+}
+
 /* 艺人列表 */
 .artist-list {
   padding: 0 20rpx;

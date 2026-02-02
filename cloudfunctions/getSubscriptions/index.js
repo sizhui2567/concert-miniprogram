@@ -8,6 +8,13 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
+const DEFAULT_NOTIFICATION_PREFS = {
+  onListed: false,
+  oneDayBefore: false,
+  customHoursEnabled: true,
+  customHours: 1
+};
+
 exports.main = async (event, context) => {
   const { page = 1, pageSize = 10 } = event;
   const { OPENID } = cloud.getWXContext();
@@ -30,6 +37,7 @@ exports.main = async (event, context) => {
         code: 0,
         data: {
           list: [],
+          notificationPrefs: DEFAULT_NOTIFICATION_PREFS,
           total: 0,
           page: page,
           pageSize: pageSize
@@ -37,13 +45,16 @@ exports.main = async (event, context) => {
       };
     }
 
-    const subscriptions = userResult.data[0].subscriptions || [];
+    const user = userResult.data[0];
+    const subscriptions = user.subscriptions || [];
+    const notificationPrefs = { ...DEFAULT_NOTIFICATION_PREFS, ...(user.notificationPrefs || {}) };
 
     if (subscriptions.length === 0) {
       return {
         code: 0,
         data: {
           list: [],
+          notificationPrefs,
           total: 0,
           page: page,
           pageSize: pageSize
@@ -71,6 +82,7 @@ exports.main = async (event, context) => {
       code: 0,
       data: {
         list: concerts,
+        notificationPrefs,
         total: subscriptions.length,
         page: page,
         pageSize: pageSize

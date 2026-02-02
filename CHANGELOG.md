@@ -87,6 +87,78 @@
 - `images/default-poster.svg`
 - `images/empty.svg`
 
+### 2026-01-28 第三次修改（页面卡住问题修复）
+
+**问题描述：**
+页面卡在首页界面，内容不显示，底部Tab栏无法点击
+
+**问题原因：**
+1. `index.js` 文件被意外清空 - 只剩下import语句，整个 `Page({})` 定义丢失
+2. 云函数调用没有超时机制 - 如果云函数未部署，`wx.cloud.callFunction` 会无限等待
+3. app.js 登录检查会阻塞页面加载
+
+**修改内容：**
+
+#### 1. 恢复 index.js ✅
+- 恢复完整的 `Page({})` 定义
+- 包含所有页面逻辑：data、生命周期函数、事件处理函数
+
+#### 2. API超时机制 ✅
+- 修改 `utils/api.js`：
+  - `callFunction` 添加10秒超时处理
+  - 超时后自动reject，不会无限等待
+  - 添加云开发未初始化检查
+
+#### 3. app.js 优化 ✅
+- `checkLoginStatus` 添加5秒超时处理
+- 登录失败不阻塞页面加载
+- 添加 `wx.cloud` 存在性检查
+
+### 2026-01-28 第四次修改（登录功能审查与修复）
+
+**问题描述：**
+登录功能代码审查发现多个问题
+
+**问题原因：**
+1. **响应格式不匹配** - 云函数返回 `{code:0, data:{openid}}` 但 app.js 读取 `res.result.openid`
+2. **isAdmin 未存储** - 云函数返回了 isAdmin 但未保存到 globalData
+3. **用户查询方式不优** - 使用 `where({_id})` 而非 `doc(id)`
+4. **缺少错误处理** - `getUserInfo` 没有 fail 回调
+
+**修改内容：**
+
+#### 1. 修复登录响应解析 ✅
+```javascript
+// 修复前（错误）
+if (res.result && res.result.openid) {
+  that.globalData.openid = res.result.openid;
+}
+
+// 修复后（正确）
+if (res.result && res.result.code === 0 && res.result.data) {
+  const { openid, isAdmin } = res.result.data;
+  that.globalData.openid = openid;
+  that.globalData.isAdmin = isAdmin || false;
+}
+```
+
+#### 2. 保存管理员状态 ✅
+- 添加 `globalData.isAdmin` 赋值
+
+#### 3. 优化用户信息查询 ✅
+```javascript
+// 修复前
+db.collection('users').where({ _id: openid }).get()
+
+// 修复后
+db.collection('users').doc(openid).get()
+```
+
+#### 4. 添加错误处理 ✅
+- `getUserInfo` 添加 fail 回调
+- 添加 openid 空值检查
+- 添加调试日志输出
+
 ---
 
 ## 数据库集合
@@ -151,7 +223,9 @@
 - [ ] 优化搜索性能（添加数据库索引）
 - [ ] 关联公众号实现模板消息
 - [x] 添加默认占位图片资源（已用emoji替代）
-- [ ] 部署云函数到云开发环境
+- [x] 部署云函数到云开发环境
+- [x] 添加API调用超时机制
+- [x] 修复登录功能响应解析
 
 ---
 

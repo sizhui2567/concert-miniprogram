@@ -102,6 +102,9 @@ const CITIES_BY_PROVINCE = {
 const NOTIFICATION_TYPES = {
   STAGE_CHANGE: 'stage_change',
   OPEN_REMIND: 'open_remind',
+  OPEN_REMIND_DAY: 'open_remind_day',
+  OPEN_REMIND_CUSTOM: 'open_remind_custom',
+  STAGE_LISTED: 'stage_listed',
   NEW_CONCERT: 'new_concert'
 };
 

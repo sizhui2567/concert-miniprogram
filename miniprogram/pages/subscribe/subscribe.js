@@ -3,6 +3,28 @@ const api = require('../../utils/api');
 const { PAGE_SIZE } = require('../../utils/constants');
 const { showToast } = require('../../utils/util');
 
+const DEFAULT_NOTIFICATION_PREFS = {
+  onListed: false,
+  oneDayBefore: false,
+  customHoursEnabled: true,
+  customHours: 1
+};
+
+const normalizeNotificationPrefs = (prefs = {}) => {
+  const merged = { ...DEFAULT_NOTIFICATION_PREFS, ...prefs };
+  let customHours = Number(merged.customHours);
+  if (!Number.isFinite(customHours)) {
+    customHours = DEFAULT_NOTIFICATION_PREFS.customHours;
+  }
+  customHours = Math.min(Math.max(Math.round(customHours), 1), 168);
+  return {
+    onListed: !!merged.onListed,
+    oneDayBefore: !!merged.oneDayBefore,
+    customHoursEnabled: !!merged.customHoursEnabled,
+    customHours
+  };
+};
+
 Page({
   data: {
     activeTab: 'concerts', // concerts, artists
@@ -11,7 +33,9 @@ Page({
     page: 1,
     hasMore: true,
     loading: false,
-    refreshing: false
+    refreshing: false,
+    notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFS },
+    savingPrefs: false
   },
 
   onLoad() {
@@ -65,7 +89,8 @@ Page({
       this.setData({
         concerts: result.list || [],
         page: 1,
-        hasMore: (result.list || []).length >= PAGE_SIZE
+        hasMore: (result.list || []).length >= PAGE_SIZE,
+        notificationPrefs: normalizeNotificationPrefs(result.notificationPrefs)
       });
     } catch (err) {
       console.error('加载订阅失败:', err);
@@ -94,6 +119,65 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  async saveNotificationPrefs(nextPrefs) {
+    if (this.data.savingPrefs) return;
+    this.setData({ savingPrefs: true });
+    try {
+      await api.updateNotificationPrefs(nextPrefs);
+      showToast('已保存');
+    } catch (err) {
+      console.error('保存通知设置失败:', err);
+      showToast('保存失败');
+    } finally {
+      this.setData({ savingPrefs: false });
+    }
+  },
+
+  onToggleNotifyListed(e) {
+    const prefs = {
+      ...this.data.notificationPrefs,
+      onListed: !!e.detail.value
+    };
+    this.setData({ notificationPrefs: prefs });
+    this.saveNotificationPrefs(prefs);
+  },
+
+  onToggleNotifyOneDay(e) {
+    const prefs = {
+      ...this.data.notificationPrefs,
+      oneDayBefore: !!e.detail.value
+    };
+    this.setData({ notificationPrefs: prefs });
+    this.saveNotificationPrefs(prefs);
+  },
+
+  onToggleNotifyCustom(e) {
+    const enabled = !!e.detail.value;
+    const prefs = {
+      ...this.data.notificationPrefs,
+      customHoursEnabled: enabled,
+      customHours: enabled ? this.data.notificationPrefs.customHours || 1 : this.data.notificationPrefs.customHours
+    };
+    this.setData({ notificationPrefs: prefs });
+    this.saveNotificationPrefs(prefs);
+  },
+
+  onCustomHoursInput(e) {
+    const raw = e.detail.value;
+    const value = Number(raw);
+    const prefs = {
+      ...this.data.notificationPrefs,
+      customHours: Number.isFinite(value) ? value : this.data.notificationPrefs.customHours
+    };
+    this.setData({ notificationPrefs: prefs });
+  },
+
+  onCustomHoursBlur() {
+    const prefs = normalizeNotificationPrefs(this.data.notificationPrefs);
+    this.setData({ notificationPrefs: prefs });
+    this.saveNotificationPrefs(prefs);
   },
 
   // 加载关注的艺人

@@ -3,6 +3,23 @@ const api = require('../../utils/api');
 const { HOT_CITIES, PAGE_SIZE } = require('../../utils/constants');
 const { showToast, debounce } = require('../../utils/util');
 
+const PLATFORM_KEYS = ['damai', 'maoyan', 'douyin', 'xiecheng', 'piaoxingqiu'];
+const PLATFORM_NAME_MAP = {
+  damai: '大麦',
+  maoyan: '猫眼',
+  douyin: '抖音',
+  xiecheng: '携程',
+  piaoxingqiu: '票星球'
+};
+
+const STAGE_CLASS_MAP = {
+  '网传': 'rumor',
+  '上架': 'listed',
+  '一开': 'first',
+  '二开': 'second',
+  '三开': 'third',
+  '已结束': 'ended'
+};
 
 Page({
   data: {
@@ -14,28 +31,18 @@ Page({
     hasMore: true,
     loading: false,
     refreshing: false,
-    initResult: '' // 用于显示初始化结果
+    isDev: false,
+    initLoading: false,
+    initResult: ''
   },
 
   onLoad() {
     // 创建防抖搜索函数
     this.debouncedSearch = debounce(this.doSearch.bind(this), 500);
+    this.setData({
+      isDev: this.getEnvVersion() === 'develop'
+    });
     this.loadConcerts();
-
-    // 调用 initDatabase 函数进行测试
-    api.initDatabase('all') // 可选值：'all', 'artists', 'concerts', 'admin'
-      .then(data => {
-        console.log('数据库初始化成功：', data);
-        this.setData({
-          initResult: JSON.stringify(data, null, 2) // 格式化显示结果
-        });
-      })
-      .catch(err => {
-        console.error('数据库初始化失败：', err);
-        this.setData({
-          initResult: `初始化失败：${err.message}`
-        });
-      });
   },
 
   onShow() {
@@ -83,8 +90,49 @@ Page({
       if (!item.dates) {
         item.dates = [];
       }
+      item.availablePlatforms = PLATFORM_KEYS.filter((key) => {
+        return item.platforms[key] && item.platforms[key].available;
+      }).map((key) => PLATFORM_NAME_MAP[key]);
+      item.stageClass = STAGE_CLASS_MAP[item.stage] || 'unknown';
       return item;
     });
+  },
+
+  getEnvVersion() {
+    let envVersion = 'release';
+    try {
+      const accountInfo = wx.getAccountInfoSync();
+      if (accountInfo && accountInfo.miniProgram && accountInfo.miniProgram.envVersion) {
+        envVersion = accountInfo.miniProgram.envVersion;
+      }
+    } catch (err) {
+      console.warn('无法获取运行环境版本:', err);
+    }
+    return envVersion;
+  },
+
+  async onInitDatabase() {
+    if (!this.data.isDev || this.data.initLoading) {
+      return;
+    }
+
+    this.setData({ initLoading: true, initResult: '' });
+    try {
+      const data = await api.initDatabase('all');
+      console.log('数据库初始化成功：', data);
+      this.setData({
+        initResult: JSON.stringify(data, null, 2)
+      });
+      showToast('初始化成功');
+    } catch (err) {
+      console.error('数据库初始化失败：', err);
+      this.setData({
+        initResult: `初始化失败：${err.message}`
+      });
+      showToast('初始化失败');
+    } finally {
+      this.setData({ initLoading: false });
+    }
   },
 
   // 加载演唱会列表

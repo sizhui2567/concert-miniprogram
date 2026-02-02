@@ -54,6 +54,48 @@
   opacity: 0.4;
 }
 
+/* 开发调试面板 */
+.dev-panel {
+  margin: 16rpx;
+  padding: 16rpx;
+  background-color: #fff;
+  border-radius: 12rpx;
+  border: 1rpx dashed #ffd6d6;
+}
+
+.dev-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.dev-title {
+  font-size: 24rpx;
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.dev-btn {
+  padding: 0 20rpx;
+  font-size: 24rpx;
+  line-height: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  color: #ff6b6b;
+  background: #fff5f5;
+  border: 1rpx solid #ffd1d1;
+}
+
+.dev-result {
+  background-color: #fff9f9;
+  padding: 12rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  color: #666;
+  white-space: pre-wrap;
+}
+
 /* 城市筛选 */
 .city-filter {
   display: flex;
@@ -151,12 +193,13 @@
   border-radius: 6rpx;
 }
 
-.stage-badge.stage-网传 { background-color: #999; }
-.stage-badge.stage-上架 { background-color: #3498db; }
-.stage-badge.stage-一开 { background-color: #e67e22; }
-.stage-badge.stage-二开 { background-color: #e74c3c; }
-.stage-badge.stage-三开 { background-color: #9b59b6; }
-.stage-badge.stage-已结束 { background-color: #7f8c8d; }
+.stage-badge.stage-rumor { background-color: #f6f6f6; }
+.stage-badge.stage-listed { background-color: #3498db; }
+.stage-badge.stage-first { background-color: #e67e22; }
+.stage-badge.stage-second { background-color: #e74c3c; }
+.stage-badge.stage-third { background-color: #9b59b6; }
+.stage-badge.stage-ended { background-color: #7f8c8d; }
+.stage-badge.stage-unknown { background-color: #999; }
 
 /* 右侧信息 */
 .card-info {
@@ -238,21 +281,26 @@
   margin-top: auto;
 }
 
-.platform-dots {
+.platform-list {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8rpx;
+  max-width: 70%;
 }
 
-.dot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background-color: #ddd;
+.platform-tag {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  color: #ff6b6b;
+  background-color: #fff5f5;
+  border: 1rpx solid #ffd1d1;
 }
 
-.dot.active {
-  background-color: #4CD964;
+.platform-empty {
+  font-size: 22rpx;
+  color: #bbb;
 }
 
 .card-price {

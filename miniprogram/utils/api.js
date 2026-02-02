@@ -9,6 +9,11 @@
  */
 const callFunction = (name, data = {}, timeout = 10000) => {
   return new Promise((resolve, reject) => {
+    if (!wx.cloud || !wx.cloud.callFunction) {
+      reject(new Error('云开发未初始化'));
+      return;
+    }
+
     let isResolved = false;
 
     // 超时处理
@@ -79,6 +84,15 @@ const getConcertDetail = (concertId) => {
  */
 const subscribeConcert = (concertId, subscribe = true) => {
   return callFunction('subscribe', { concertId, subscribe });
+};
+
+/**
+ * 更新订阅通知偏好
+ * @param {Object} prefs 通知偏好
+ * @returns {Promise}
+ */
+const updateNotificationPrefs = (prefs = {}) => {
+  return callFunction('updateNotificationPrefs', { prefs });
 };
 
 /**
@@ -251,6 +265,7 @@ module.exports = {
   getConcerts,
   getConcertDetail,
   subscribeConcert,
+  updateNotificationPrefs,
   getTomorrowConcerts,
   getSubscriptions,
   followArtist,

@@ -1,10 +1,3 @@
-<view>
-  <text>测试初始化数据库：</text>
-  <view>
-    <text>初始化结果：</text>
-    <text>{{initResult}}</text>
-  </view>
-</view>
 <!-- pages/index/index.wxml -->
 <view class="container">
   <!-- 搜索栏 - 支持实时搜索 -->
@@ -27,18 +20,26 @@
     </view>
   </view>
 
-  <!-- 城市筛选 -->
-  <scroll-view class="city-filter" scroll-x enable-flex>
-    <view
-      wx:for="{{hotCities}}"
-      wx:key="*this"
-      class="city-item {{selectedCity === item ? 'active' : ''}}"
-      data-city="{{item}}"
-      bindtap="onSelectCity"
-    >
-      {{item}}
+  <!-- 开发调试面板（仅开发版显示） -->
+  <view wx:if="{{isDev}}" class="dev-panel">
+    <view class="dev-header">
+      <text class="dev-title">开发调试</text>
+      <button
+        class="dev-btn"
+        size="mini"
+        loading="{{initLoading}}"
+        disabled="{{initLoading}}"
+        bindtap="onInitDatabase"
+      >
+        初始化数据
+      </button>
     </view>
-  </scroll-view>
+    <view wx:if="{{initResult}}" class="dev-result">
+      <text selectable>{{initResult}}</text>
+    </view>
+  </view>
+
+ 
 
   <!-- 搜索结果提示 -->
   <view wx:if="{{searchKeyword}}" class="search-tips">
@@ -67,7 +68,7 @@
             <text>🎤</text>
           </view>
           <!-- 阶段标签 -->
-          <view class="stage-badge stage-{{item.stage}}">{{item.stage}}</view>
+          <view class="stage-badge stage-{{item.stageClass}}">{{item.stage}}</view>
         </view>
 
         <!-- 右侧信息 -->
@@ -100,12 +101,17 @@
 
           <!-- 平台和价格 -->
           <view class="card-bottom">
-            <view class="platform-dots">
-              <view class="dot {{item.platforms.damai.available ? 'active' : ''}}" data-name="大麦"></view>
-              <view class="dot {{item.platforms.maoyan.available ? 'active' : ''}}" data-name="猫眼"></view>
-              <view class="dot {{item.platforms.douyin.available ? 'active' : ''}}" data-name="抖音"></view>
-              <view class="dot {{item.platforms.xiecheng.available ? 'active' : ''}}" data-name="携程"></view>
-              <view class="dot {{item.platforms.piaoxingqiu.available ? 'active' : ''}}" data-name="票星球"></view>
+            <view class="platform-list">
+              <block wx:if="{{item.availablePlatforms.length > 0}}">
+                <text
+                  wx:for="{{item.availablePlatforms}}"
+                  wx:key="*this"
+                  class="platform-tag"
+                >
+                  {{item}}
+                </text>
+              </block>
+              <text wx:else class="platform-empty">暂无平台</text>
             </view>
             <view class="card-price" wx:if="{{item.priceRange}}">
               <text class="price-symbol">¥</text>

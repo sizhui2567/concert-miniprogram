@@ -22,6 +22,46 @@
 
   <!-- 演唱会列表 -->
   <view wx:if="{{activeTab === 'concerts'}}" class="content-section">
+    <view class="notify-settings card">
+      <view class="notify-title">订阅通知设置</view>
+      <view class="notify-item">
+        <text>上架立刻通知</text>
+        <switch
+          checked="{{notificationPrefs.onListed}}"
+          bindchange="onToggleNotifyListed"
+          disabled="{{savingPrefs}}"
+        />
+      </view>
+      <view class="notify-item">
+        <text>开售前一天通知</text>
+        <switch
+          checked="{{notificationPrefs.oneDayBefore}}"
+          bindchange="onToggleNotifyOneDay"
+          disabled="{{savingPrefs}}"
+        />
+      </view>
+      <view class="notify-item">
+        <text>自定义提前通知</text>
+        <view class="notify-custom">
+          <input
+            class="notify-input"
+            type="number"
+            value="{{notificationPrefs.customHours}}"
+            bindinput="onCustomHoursInput"
+            bindblur="onCustomHoursBlur"
+            disabled="{{savingPrefs || !notificationPrefs.customHoursEnabled}}"
+          />
+          <text class="notify-unit">小时</text>
+          <switch
+            checked="{{notificationPrefs.customHoursEnabled}}"
+            bindchange="onToggleNotifyCustom"
+            disabled="{{savingPrefs}}"
+          />
+        </view>
+      </view>
+      <view class="notify-tip">设置将应用到所有订阅演唱会</view>
+    </view>
+
     <block wx:if="{{concerts.length > 0}}">
       <concert-card
         wx:for="{{concerts}}"

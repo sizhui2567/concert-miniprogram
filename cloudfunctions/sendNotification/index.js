@@ -8,12 +8,56 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
+const DEFAULT_NOTIFICATION_PREFS = {
+  onListed: false,
+  oneDayBefore: false,
+  customHoursEnabled: true,
+  customHours: 1
+};
+
+const normalizeNotificationPrefs = (prefs = {}) => {
+  const merged = { ...DEFAULT_NOTIFICATION_PREFS, ...prefs };
+  let customHours = Number(merged.customHours);
+  if (!Number.isFinite(customHours)) {
+    customHours = DEFAULT_NOTIFICATION_PREFS.customHours;
+  }
+  customHours = Math.min(Math.max(Math.round(customHours), 1), 168);
+  return {
+    onListed: !!merged.onListed,
+    oneDayBefore: !!merged.oneDayBefore,
+    customHoursEnabled: !!merged.customHoursEnabled,
+    customHours
+  };
+};
+
+const isWithinRange = (target, start, end) => {
+  return target > start && target <= end;
+};
+
+const getListedStageTime = (concert) => {
+  if (concert.stage !== '上架') return null;
+  if (Array.isArray(concert.stageHistory)) {
+    const listedItems = concert.stageHistory.filter(item => item.stage === '上架' && item.time);
+    if (listedItems.length > 0) {
+      const latest = listedItems[listedItems.length - 1];
+      const time = new Date(latest.time);
+      if (!Number.isNaN(time.getTime())) return time;
+    }
+  }
+  if (concert.updateTime) {
+    const time = new Date(concert.updateTime);
+    if (!Number.isNaN(time.getTime())) return time;
+  }
+  return null;
+};
+
 exports.main = async (event, context) => {
   try {
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
-    // 查找即将开售的演唱会（1小时内）
+    // 查找可通知的演唱会
     const concerts = await db.collection('concerts')
       .where(_.or([
         { status: 'published' },
@@ -22,42 +66,108 @@ exports.main = async (event, context) => {
       .get();
 
     const notificationsToSend = [];
+    const notifiedCache = new Set();
+
+    const hasSentNotification = async (userId, concertId, type) => {
+      const key = `${userId}|${concertId}|${type}`;
+      if (notifiedCache.has(key)) {
+        return true;
+      }
+      const existingNotification = await db.collection('notifications')
+        .where({
+          userId,
+          concertId,
+          type,
+          sent: true
+        })
+        .get();
+      if (existingNotification.data.length > 0) {
+        notifiedCache.add(key);
+        return true;
+      }
+      return false;
+    };
 
     for (const concert of concerts.data) {
-      if (!concert.platforms) continue;
+      const listedTime = getListedStageTime(concert);
+      const shouldNotifyListed = listedTime && isWithinRange(listedTime, oneHourAgo, now);
+      const hasPlatforms = concert.platforms && Object.keys(concert.platforms).length > 0;
 
-      for (const [platform, data] of Object.entries(concert.platforms)) {
-        if (data.openTime) {
+      if (!shouldNotifyListed && !hasPlatforms) continue;
+
+      const users = await db.collection('users')
+        .where({
+          subscriptions: concert._id
+        })
+        .get();
+
+      if (!users.data || users.data.length === 0) continue;
+
+      for (const user of users.data) {
+        const prefs = normalizeNotificationPrefs(user.notificationPrefs);
+
+        if (prefs.onListed && shouldNotifyListed) {
+          const type = 'stage_listed';
+          if (!(await hasSentNotification(user._id, concert._id, type))) {
+            notificationsToSend.push({
+              userId: user._id,
+              concertId: concert._id,
+              concertTitle: concert.title,
+              timeValue: listedTime.toISOString(),
+              platform: '',
+              type,
+              summary: '已上架提醒',
+              content: `您关注的"${concert.title}"已上架`
+            });
+            notifiedCache.add(`${user._id}|${concert._id}|${type}`);
+          }
+        }
+
+        if (!hasPlatforms) continue;
+
+        for (const [platform, data] of Object.entries(concert.platforms)) {
+          if (!data.openTime) continue;
           const openTime = new Date(data.openTime);
+          if (Number.isNaN(openTime.getTime())) continue;
 
-          // 检查是否在未来1小时内开售
-          if (openTime > now && openTime <= oneHourLater) {
-            // 获取订阅该演唱会的用户
-            const users = await db.collection('users')
-              .where({
-                subscriptions: concert._id
-              })
-              .get();
-
-            for (const user of users.data) {
-              // 检查是否已发送过通知
-              const existingNotification = await db.collection('notifications')
-                .where({
-                  userId: user._id,
-                  concertId: concert._id,
-                  type: 'open_remind',
-                  sent: true
-                })
-                .get();
-
-              if (existingNotification.data.length === 0) {
+          if (prefs.oneDayBefore) {
+            const oneDayTarget = new Date(openTime.getTime() - 24 * 60 * 60 * 1000);
+            if (isWithinRange(oneDayTarget, now, oneHourLater)) {
+              const type = 'open_remind_day';
+              if (!(await hasSentNotification(user._id, concert._id, type))) {
                 notificationsToSend.push({
                   userId: user._id,
                   concertId: concert._id,
                   concertTitle: concert.title,
-                  openTime: data.openTime,
-                  platform: platform
+                  timeValue: data.openTime,
+                  platform,
+                  type,
+                  summary: '提前一天提醒',
+                  content: `您关注的"${concert.title}"将在${platform}开售（提前一天提醒）`
                 });
+                notifiedCache.add(`${user._id}|${concert._id}|${type}`);
+              }
+            }
+          }
+
+          if (prefs.customHoursEnabled) {
+            const offsetHours = prefs.customHours;
+            const customTarget = new Date(openTime.getTime() - offsetHours * 60 * 60 * 1000);
+            if (isWithinRange(customTarget, now, oneHourLater)) {
+              const type = 'open_remind_custom';
+              if (!(await hasSentNotification(user._id, concert._id, type))) {
+                notificationsToSend.push({
+                  userId: user._id,
+                  concertId: concert._id,
+                  concertTitle: concert.title,
+                  timeValue: data.openTime,
+                  platform,
+                  type,
+                  hours: offsetHours,
+                  summary: `提前${offsetHours}小时提醒`,
+                  content: `您关注的"${concert.title}"将在${platform}开售（提前${offsetHours}小时提醒）`
+                });
+                notifiedCache.add(`${user._id}|${concert._id}|${type}`);
               }
             }
           }
@@ -76,8 +186,8 @@ exports.main = async (event, context) => {
           page: `/pages/detail/detail?id=${notification.concertId}`,
           data: {
             thing1: { value: notification.concertTitle.substring(0, 20) },
-            time2: { value: notification.openTime },
-            thing3: { value: `即将在${notification.platform}开售` }
+            time2: { value: notification.timeValue },
+            thing3: { value: notification.summary.substring(0, 20) }
           }
         });
 
@@ -86,8 +196,10 @@ exports.main = async (event, context) => {
           data: {
             userId: notification.userId,
             concertId: notification.concertId,
-            type: 'open_remind',
-            content: `您关注的"${notification.concertTitle}"即将开售`,
+            type: notification.type,
+            content: notification.content,
+            platform: notification.platform,
+            hours: notification.hours || 0,
             sent: true,
             sendTime: now
           }
@@ -101,8 +213,10 @@ exports.main = async (event, context) => {
           data: {
             userId: notification.userId,
             concertId: notification.concertId,
-            type: 'open_remind',
-            content: `您关注的"${notification.concertTitle}"即将开售`,
+            type: notification.type,
+            content: notification.content,
+            platform: notification.platform,
+            hours: notification.hours || 0,
             sent: false,
             error: err.message,
             sendTime: now

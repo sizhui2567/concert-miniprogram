@@ -105,7 +105,18 @@
 | avatarUrl | string | 否 | 用户头像 |
 | subscriptions | array | 是 | 订阅的演唱会ID数组 |
 | followArtists | array | 是 | 关注的艺人ID数组 |
+| notificationPrefs | object | 否 | 订阅通知设置 |
 | createTime | date | 是 | 注册时间 |
+
+### notificationPrefs 字段结构
+```json
+{
+  "onListed": false,
+  "oneDayBefore": false,
+  "customHoursEnabled": true,
+  "customHours": 1
+}
+```
 
 ### 建议索引
 - `subscriptions` - 查询订阅了某演唱会的用户
@@ -136,8 +147,10 @@
 | _id | string | 是 | 自动生成 |
 | userId | string | 是 | 用户openid |
 | concertId | string | 是 | 演唱会ID |
-| type | string | 是 | 通知类型：stage_change/open_remind/new_concert |
+| type | string | 是 | 通知类型：stage_listed/open_remind_day/open_remind_custom/other |
 | content | string | 是 | 通知内容 |
+| platform | string | 否 | 平台标识（如 damai/maoyan） |
+| hours | number | 否 | 自定义提前小时数 |
 | sent | boolean | 是 | 是否已发送 |
 | error | string | 否 | 发送失败的错误信息 |
 | sendTime | date | 是 | 发送时间 |

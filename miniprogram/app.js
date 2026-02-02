@@ -5,7 +5,7 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
-        env: 'cloud1-2gw1ruue291212e5', // 替换为你的云开发环境ID
+        env: '', // 替换为你的云开发环境ID
         traceUser: true,
       });
     }
@@ -17,7 +17,9 @@ App({
     };
 
     // 获取用户登录状态（不阻塞页面加载）
-    this.checkLoginStatus();
+    if (wx.cloud) {
+      this.checkLoginStatus();
+    }
   },
 
   globalData: {
@@ -40,9 +42,18 @@ App({
       data: {},
       success: res => {
         clearTimeout(timeoutId);
-        if (res.result && res.result.openid) {
-          that.globalData.openid = res.result.openid;
+        console.log('登录结果:', res.result);
+
+        // 修复：正确读取返回数据
+        if (res.result && res.result.code === 0 && res.result.data) {
+          const { openid, isAdmin } = res.result.data;
+          that.globalData.openid = openid;
+          that.globalData.isAdmin = isAdmin || false;
           // 获取用户信息
+          that.getUserInfo();
+        } else if (res.result && res.result.openid) {
+          // 兼容旧格式
+          that.globalData.openid = res.result.openid;
           that.getUserInfo();
         }
       },
@@ -56,14 +67,19 @@ App({
   // 获取用户信息
   getUserInfo: function() {
     const that = this;
+    if (!that.globalData.openid) return;
+
     const db = wx.cloud.database();
-    db.collection('users').where({
-      _id: that.globalData.openid
-    }).get({
+    // 修复：使用 doc 直接查询，并添加错误处理
+    db.collection('users').doc(that.globalData.openid).get({
       success: res => {
-        if (res.data.length > 0) {
-          that.globalData.userInfo = res.data[0];
+        if (res.data) {
+          that.globalData.userInfo = res.data;
+          console.log('用户信息已加载:', res.data);
         }
+      },
+      fail: err => {
+        console.error('获取用户信息失败:', err);
       }
     });
   },
