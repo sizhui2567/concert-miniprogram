@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "itemId": "1016133935724",
+  "sourceUrl": "",
+  "title": "【北京】2026张杰未·LIVE—「开往1982」演唱会-北京站",
+  "seatImageTitle": "座位图",
+  "seatImages": [
+    "https://img.alicdn.com/imgextra/i4/2251059038/O1CN01fWhCf32GdSlvnzi0z_!!2251059038.jpg"
+  ],
+  "seatImageCount": 1,
+  "hasSeatMap": true,
+  "rawItem": {
+    "cityName": "北京市",
+    "venueName": "",
+    "projectStatusTag": "",
+    "itemType": 4
+  },
+  "crawledAt": "2026-04-03T14:42:02.099250+00:00"
+}

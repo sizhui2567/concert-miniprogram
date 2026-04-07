@@ -2,22 +2,226 @@
 
 /* 颜色变量 */
 page {
-  --primary-color: #FF6B6B;
-  --secondary-color: #4ECDC4;
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --text-light: #999999;
-  --bg-color: #f5f5f5;
-  --white: #ffffff;
-  --border-color: #eeeeee;
+  /* Brand */
+  --color-primary: #ff5a36;
+  --color-accent: #00c2a8;
+  --color-warning: #ffb020;
+  --color-bg-page: #f7f8fa;
+  --color-bg-night: #1a1a1a;
+  --color-surface: #ffffff;
+  --color-text-strong: #171a1f;
+  --color-text-body: #667085;
+  --color-text-muted: #99a2b3;
+  --color-border: #e5e7eb;
+
+  /* Typography (375px viewport baseline) */
+  --fz-h1: 48rpx;
+  --lh-h1: 64rpx;
+  --fz-h2: 32rpx;
+  --lh-h2: 48rpx;
+  --fz-body: 28rpx;
+  --lh-body: 40rpx;
+  --fz-caption: 24rpx;
+  --lh-caption: 36rpx;
+  --ff-number: 'DIN Alternate', 'DIN', 'SF Pro Display', 'Segoe UI', sans-serif;
+  --ff-cjk: 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+  /* Spacing / Radius / Shadow */
+  --space-8: 16rpx;
+  --space-12: 24rpx;
+  --space-16: 32rpx;
+  --space-24: 48rpx;
+  --radius-card: 32rpx;
+  --radius-btn: 24rpx;
+  --radius-tag-sm: 8rpx;
+  --radius-tag: 16rpx;
+  --shadow-card: 0 8rpx 32rpx rgba(23, 26, 31, 0.04);
+  --shadow-sticky: 0 -8rpx 48rpx rgba(0, 0, 0, 0.06);
+
+  /* Backward compatible aliases */
+  --primary-color: var(--color-primary);
+  --secondary-color: var(--color-accent);
+  --text-primary: var(--color-text-strong);
+  --text-secondary: var(--color-text-body);
+  --text-light: var(--color-text-muted);
+  --bg-color: var(--color-bg-page);
+  --white: var(--color-surface);
+  --border-color: var(--color-border);
 
   /* 阶段颜色 */
-  --stage-rumor: #999999;
+  --stage-rumor: var(--c-999999);
   --stage-listed: #3498db;
   --stage-first: #e67e22;
   --stage-second: #e74c3c;
   --stage-third: #9b59b6;
   --stage-ended: #7f8c8d;
+
+  --ng-bg-page: var(--color-bg-page);
+  --ng-bg-surface: var(--color-surface);
+  --ng-bg-elevated: #f0f2f5;
+  --ng-text-primary: var(--color-text-strong);
+  --ng-text-secondary: var(--color-text-body);
+  --ng-text-muted: var(--color-text-muted);
+  --ng-accent: var(--color-primary);
+  --ng-accent-strong: #ff7a5b;
+  --ng-border: rgba(23, 26, 31, 0.1);
+
+  /* Generated color tokens */
+  --c-0f1115: #0f1115;
+  --c-10131a: #10131a;
+  --c-12151d: #12151d;
+  --c-141923: #141923;
+  --c-151922: #151922;
+  --c-191d27: #191d27;
+  --c-1a1a1a: #1a1a1a;
+  --c-1a202c: #1a202c;
+  --c-1b2230: #1b2230;
+  --c-1c2230: #1c2230;
+  --c-1d2430: #1d2430;
+  --c-1f2733: #1f2733;
+  --c-1f2a3b: #1f2a3b;
+  --c-22743f: #22743f;
+  --c-232b38: #232b38;
+  --c-233252: #233252;
+  --c-243144: #243144;
+  --c-27303f: #27303f;
+  --c-2980b9: #2980b9;
+  --c-2a3140: #2a3140;
+  --c-2b3648: #2b3648;
+  --c-2e3a4f: #2e3a4f;
+  --c-2f3b4f: #2f3b4f;
+  --c-2f8f4e: #2f8f4e;
+  --c-2f8f4f: #2f8f4f;
+  --c-303847: #303847;
+  --c-344158: #344158;
+  --c-345f9b: #345f9b;
+  --c-3498db: #3498db;
+  --c-355f9a: #355f9a;
+  --c-3d8dff: #3d8dff;
+  --c-3e4a5d: #3e4a5d;
+  --c-3f4a5c: #3f4a5c;
+  --c-42526a: #42526a;
+  --c-44556d: #44556d;
+  --c-4cd964: #4cd964;
+  --c-4f607a: #4f607a;
+  --c-4f9fff: #4f9fff;
+  --c-516079: #516079;
+  --c-585f6e: #585f6e;
+  --c-58667d: #58667d;
+  --c-5a6880: #5a6880;
+  --c-5f6d85: #5f6d85;
+  --c-636b7b: #636b7b;
+  --c-637089: #637089;
+  --c-66778f: #66778f;
+  --c-6a7281: #6a7281;
+  --c-6a7890: #6a7890;
+  --c-6b788e: #6b788e;
+  --c-74839a: #74839a;
+  --c-7b4a4d: #7b4a4d;
+  --c-7b889f: #7b889f;
+  --c-7c8aa2: #7c8aa2;
+  --c-7d8ba2: #7d8ba2;
+  --c-7f7a70: #7f7a70;
+  --c-7f8c8d: #7f8c8d;
+  --c-8390a4: #8390a4;
+  --c-8693a8: #8693a8;
+  --c-888: #888;
+  --c-8894a9: #8894a9;
+  --c-8a96a9: #8a96a9;
+  --c-8a9ab2: #8a9ab2;
+  --c-8b98ac: #8b98ac;
+  --c-8e44ad: #8e44ad;
+  --c-8f4e1f: #8f4e1f;
+  --c-8f4f54: #8f4f54;
+  --c-8f8a80: #8f8a80;
+  --c-926c20: #926c20;
+  --c-95a5a6: #95a5a6;
+  --c-98a2b3: #98a2b3;
+  --c-9aa5b6: #9aa5b6;
+  --c-9b59b6: #9b59b6;
+  --c-9b6bff: #9b6bff;
+  --c-9b6d13: #9b6d13;
+  --c-9b988f: #9b988f;
+  --c-9c4a56: #9c4a56;
+  --c-9f9a8f: #9f9a8f;
+  --c-a2aec0: #a2aec0;
+  --c-a9a396: #a9a396;
+  --c-aaa: #aaa;
+  --c-b06f1d: #b06f1d;
+  --c-b8b4aa: #b8b4aa;
+  --c-bbb: #bbb;
+  --c-bdc3c7: #bdc3c7;
+  --c-bfd6ff: #bfd6ff;
+  --c-c4bdaf: #c4bdaf;
+  --c-c83d56: #c83d56;
+  --c-c9a86a: #c9a86a;
+  --c-c9c2b5: #c9c2b5;
+  --c-c9d5e6: #c9d5e6;
+  --c-ccc: #ccc;
+  --c-ccd5e3: #ccd5e3;
+  --c-cfd8e4: #cfd8e4;
+  --c-d0d0d0: #d0d0d0;
+  --c-d5cec1: #d5cec1;
+  --c-d7d0c3: #d7d0c3;
+  --c-d8dce6: #d8dce6;
+  --c-d9485f: #d9485f;
+  --c-dbe3ef: #dbe3ef;
+  --c-dce4f1: #dce4f1;
+  --c-dfbf84: #dfbf84;
+  --c-e0e0e0: #e0e0e0;
+  --c-e1e8f2: #e1e8f2;
+  --c-e2e8f2: #e2e8f2;
+  --c-e5ebf5: #e5ebf5;
+  --c-e67e22: #e67e22;
+  --c-e6edf8: #e6edf8;
+  --c-e6f7ec: #e6f7ec;
+  --c-e74c3c: #e74c3c;
+  --c-e7edf7: #e7edf7;
+  --c-e8e2d8: #e8e2d8;
+  --c-e8edf6: #e8edf6;
+  --c-e8eef7: #e8eef7;
+  --c-e8f1ff: #e8f1ff;
+  --c-e8f7ec: #e8f7ec;
+  --c-edf1f8: #edf1f8;
+  --c-eef1f6: #eef1f6;
+  --c-eef2f8: #eef2f8;
+  --c-eef2f9: #eef2f9;
+  --c-eef5ff: #eef5ff;
+  --c-efb0b9: #efb0b9;
+  --c-f05252: #f05252;
+  --c-f0f0f0: #f0f0f0;
+  --c-f1dce0: #f1dce0;
+  --c-f2c3ca: #f2c3ca;
+  --c-f39c12: #f39c12;
+  --c-f4d38b: #f4d38b;
+  --c-f4f6fb: #f4f6fb;
+  --c-f5f2ea: #f5f2ea;
+  --c-f5f7fb: #f5f7fb;
+  --c-f6f6f6: #f6f6f6;
+  --c-f7f9fd: #f7f9fd;
+  --c-f8faff: #f8faff;
+  --c-fafafa: #fafafa;
+  --c-ff4f6a: #ff4f6a;
+  --c-ff5c62: #ff5c62;
+  --c-ff5e62: #ff5e62;
+  --c-ff5f63: #ff5f63;
+  --c-ff6a63: #ff6a63;
+  --c-ff7a67: #ff7a67;
+  --c-ff7d6a: #ff7d6a;
+  --c-ff7d6b: #ff7d6b;
+  --c-ff7e6b: #ff7e6b;
+  --c-ff826e: #ff826e;
+  --c-ff8e70: #ff8e70;
+  --c-ffb02e: #ffb02e;
+  --c-ffb4b4: #ffb4b4;
+  --c-ffb7bb: #ffb7bb;
+  --c-ffd1d1: #ffd1d1;
+  --c-ffd6d6: #ffd6d6;
+  --c-ffd8de: #ffd8de;
+  --c-ffe7ea: #ffe7ea;
+  --c-ffe8e8: #ffe8e8;
+  --c-fff5f5: #fff5f5;
+  --c-ffffff: #ffffff;
 }
 
 /* Flex 布局 */
@@ -129,7 +333,7 @@ page {
 .text-primary { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
 .text-light { color: var(--text-light); }
-.text-white { color: #ffffff; }
+.text-white { color: var(--c-ffffff); }
 .text-danger { color: var(--primary-color); }
 
 .ellipsis {
@@ -147,14 +351,15 @@ page {
 
 /* 卡片样式 */
 .card {
-  background-color: var(--white);
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1rpx solid var(--color-border);
   overflow: hidden;
 }
 
 .card-float {
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16rpx 36rpx rgba(23, 26, 31, 0.08);
   transform: translateY(-2rpx);
 }
 
@@ -163,37 +368,46 @@ page {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16rpx 32rpx;
-  border-radius: 8rpx;
-  font-size: 28rpx;
+  min-height: 88rpx;
+  padding: 0 32rpx;
+  border-radius: var(--radius-btn);
+  font-size: 32rpx;
+  font-weight: 600;
   border: none;
   outline: none;
+  transition: transform 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
-  color: var(--white);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .btn-secondary {
-  background-color: var(--secondary-color);
-  color: var(--white);
+  background-color: rgba(255, 90, 54, 0.1);
+  color: var(--color-primary);
 }
 
 .btn-outline {
   background-color: transparent;
-  border: 2rpx solid var(--primary-color);
-  color: var(--primary-color);
+  border: 2rpx solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn-small {
-  padding: 8rpx 20rpx;
+  min-height: 64rpx;
+  padding: 0 20rpx;
   font-size: 24rpx;
 }
 
 .btn-large {
-  padding: 24rpx 48rpx;
-  font-size: 32rpx;
+  min-height: 96rpx;
+  padding: 0 48rpx;
+  font-size: 36rpx;
 }
 
 .btn-disabled {
@@ -203,32 +417,37 @@ page {
 /* 输入框 */
 .input {
   width: 100%;
-  height: 80rpx;
+  height: 88rpx;
   padding: 0 24rpx;
-  border: 2rpx solid var(--border-color);
-  border-radius: 8rpx;
+  border: 2rpx solid transparent;
+  border-radius: var(--radius-btn);
+  background: #f3f4f6;
   font-size: 28rpx;
+  color: var(--color-text-strong);
   box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input:focus {
-  border-color: var(--primary-color);
+  border-color: rgba(255, 90, 54, 0.55);
+  box-shadow: 0 0 0 4rpx rgba(255, 90, 54, 0.12);
 }
 
 /* 标签 */
 .tag {
   display: inline-flex;
   align-items: center;
-  padding: 4rpx 16rpx;
-  border-radius: 4rpx;
+  padding: 6rpx 16rpx;
+  border-radius: var(--radius-tag);
   font-size: 22rpx;
+  line-height: 1.2;
 }
 
 /* 分割线 */
 .divider {
   height: 1rpx;
-  background-color: var(--border-color);
-  margin: 20rpx 0;
+  background-color: var(--color-border);
+  margin: 24rpx 0;
 }
 
 /* 空状态 */
@@ -247,8 +466,9 @@ page {
 }
 
 .empty-state text {
-  color: var(--text-light);
+  color: var(--color-text-muted);
   font-size: 28rpx;
+  line-height: 1.6;
 }
 
 /* 加载更多 */
@@ -257,7 +477,7 @@ page {
   align-items: center;
   justify-content: center;
   padding: 30rpx 0;
-  color: var(--text-light);
+  color: var(--color-text-muted);
   font-size: 26rpx;
 }
 

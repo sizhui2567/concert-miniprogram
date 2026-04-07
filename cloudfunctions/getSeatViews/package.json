@@ -1,0 +1,9 @@
+﻿{
+  "name": "getSeatViews",
+  "version": "1.0.0",
+  "description": "获取演唱会座位视野图列表",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

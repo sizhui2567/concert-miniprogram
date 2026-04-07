@@ -1,7 +1,7 @@
 /* pages/admin/artists/artists.wxss */
 .container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--ng-bg-elevated);
   padding: 20rpx;
   padding-bottom: 120rpx;
 }
@@ -12,7 +12,7 @@
 }
 
 .artist-item {
-  background-color: #fff;
+  background-color: var(--ng-bg-surface);
   border-radius: 16rpx;
   margin-bottom: 20rpx;
   overflow: hidden;
@@ -40,24 +40,24 @@
 .artist-name {
   font-size: 30rpx;
   font-weight: 600;
-  color: #333;
+  color: var(--ng-text-primary);
   margin-bottom: 6rpx;
 }
 
 .artist-alias {
   font-size: 24rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   margin-bottom: 6rpx;
 }
 
 .artist-stats {
   font-size: 22rpx;
-  color: #ccc;
+  color: var(--c-ccc);
 }
 
 .artist-actions {
   display: flex;
-  border-top: 1rpx solid #f5f5f5;
+  border-top: 1rpx solid var(--ng-bg-elevated);
 }
 
 .action-edit,
@@ -69,12 +69,12 @@
 }
 
 .action-edit {
-  color: #667eea;
-  border-right: 1rpx solid #f5f5f5;
+  color: var(--ng-accent);
+  border-right: 1rpx solid var(--ng-bg-elevated);
 }
 
 .action-delete {
-  color: #e74c3c;
+  color: var(--c-e74c3c);
 }
 
 /* 空状态 */
@@ -95,13 +95,13 @@
 
 .empty-state text {
   font-size: 28rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   margin-bottom: 10rpx;
 }
 
 .empty-tip {
   font-size: 24rpx;
-  color: #ccc;
+  color: var(--c-ccc);
 }
 
 /* 添加按钮 */
@@ -111,7 +111,7 @@
   bottom: 60rpx;
   width: 100rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--ng-accent) 0%, var(--ng-accent-strong) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -121,7 +121,7 @@
 
 .add-btn text {
   font-size: 56rpx;
-  color: #fff;
+  color: var(--ng-bg-surface);
   line-height: 1;
 }
 
@@ -142,7 +142,7 @@
 .modal-content {
   width: 80%;
   max-width: 600rpx;
-  background-color: #fff;
+  background-color: var(--ng-bg-surface);
   border-radius: 20rpx;
   overflow: hidden;
 }
@@ -152,18 +152,18 @@
   align-items: center;
   justify-content: space-between;
   padding: 30rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid var(--ng-bg-elevated);
 }
 
 .modal-title {
   font-size: 32rpx;
   font-weight: 600;
-  color: #333;
+  color: var(--ng-text-primary);
 }
 
 .modal-close {
   font-size: 48rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   line-height: 1;
 }
 
@@ -188,7 +188,7 @@
 
 .avatar-tip {
   font-size: 24rpx;
-  color: #667eea;
+  color: var(--ng-accent);
 }
 
 /* 表单 */
@@ -199,7 +199,7 @@
 .form-label {
   display: block;
   font-size: 26rpx;
-  color: #666;
+  color: var(--ng-text-secondary);
   margin-bottom: 12rpx;
 }
 
@@ -208,15 +208,15 @@
   height: 80rpx;
   padding: 0 20rpx;
   font-size: 28rpx;
-  color: #333;
-  background-color: #f5f5f5;
+  color: var(--ng-text-primary);
+  background-color: var(--ng-bg-elevated);
   border-radius: 8rpx;
   box-sizing: border-box;
 }
 
 .form-hint {
   font-size: 22rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   margin-top: 8rpx;
   display: block;
 }
@@ -239,16 +239,123 @@
 }
 
 .btn-cancel {
-  background: #f5f5f5;
-  color: #666;
+  background: var(--ng-bg-elevated);
+  color: var(--ng-text-secondary);
 }
 
 .btn-confirm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ng-accent) 0%, var(--ng-accent-strong) 100%);
+  color: var(--ng-bg-surface);
 }
 
 .btn-cancel::after,
 .btn-confirm::after {
   border: none;
+}
+
+/* Night Gold override */
+.container {
+  background: linear-gradient(180deg, var(--c-0f1115) 0%, var(--c-151922) 52%, var(--c-10131a) 100%);
+}
+
+.artist-item,
+.modal-content {
+  background: var(--c-151922);
+  border: 1rpx solid rgba(201, 168, 106, 0.16);
+}
+
+.artist-name,
+.modal-title,
+.form-input {
+  color: var(--c-f5f2ea);
+}
+
+.artist-alias,
+.artist-stats,
+.empty-state text,
+.form-label,
+.form-hint,
+.modal-close {
+  color: var(--c-b8b4aa);
+}
+
+.action-edit,
+.avatar-tip {
+  color: var(--c-dfbf84);
+}
+
+.artist-actions,
+.modal-header,
+.action-edit {
+  border-color: rgba(201, 168, 106, 0.15);
+}
+
+.add-btn,
+.btn-confirm {
+  background: linear-gradient(135deg, var(--c-c9a86a) 0%, var(--c-dfbf84) 100%);
+}
+
+.add-btn text,
+.btn-confirm {
+  color: var(--c-10131a);
+}
+
+.btn-cancel,
+.form-input {
+  background: var(--c-1f2733);
+  border: 1rpx solid rgba(201, 168, 106, 0.2);
+  color: var(--c-d7d0c3);
+}
+
+.container {
+  background: linear-gradient(180deg, var(--c-0f1115) 0%, var(--c-151922) 52%, var(--c-10131a) 100%);
+}
+
+.artist-item,
+.modal-content {
+  background: var(--c-151922);
+  border: 1rpx solid rgba(201, 168, 106, 0.16);
+}
+
+.artist-name,
+.modal-title,
+.form-input {
+  color: var(--c-f5f2ea);
+}
+
+.artist-alias,
+.artist-stats,
+.form-label,
+.form-hint,
+.empty-state text,
+.modal-close {
+  color: var(--c-b8b4aa);
+}
+
+.action-edit,
+.avatar-tip {
+  color: var(--c-dfbf84);
+}
+
+.artist-actions,
+.modal-header,
+.action-edit {
+  border-color: rgba(201, 168, 106, 0.15);
+}
+
+.add-btn,
+.btn-confirm {
+  background: linear-gradient(135deg, var(--c-c9a86a) 0%, var(--c-dfbf84) 100%);
+}
+
+.btn-confirm,
+.add-btn text {
+  color: var(--c-10131a);
+}
+
+.btn-cancel,
+.form-input {
+  background: var(--c-1f2733);
+  border: 1rpx solid rgba(201, 168, 106, 0.2);
+  color: var(--c-d7d0c3);
 }

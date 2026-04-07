@@ -1,8 +1,7 @@
 <!-- pages/tomorrow/tomorrow.wxml -->
 <view class="container">
-  <!-- 日期头部 -->
   <view class="date-header">
-    <view class="date-icon">📅</view>
+    <view class="date-icon">日</view>
     <view class="date-info">
       <text class="date-label">明日开售</text>
       <text class="date-value">{{tomorrowDate}}</text>
@@ -12,88 +11,87 @@
     </view>
   </view>
 
-  <!-- 演唱会列表 -->
-  <view wx:if="{{!loading && concerts.length > 0}}" class="concert-list">
-    <view
-      wx:for="{{concerts}}"
-      wx:key="_id"
-      class="concert-item card"
-      data-id="{{item._id}}"
-      bindtap="onTapConcert"
-    >
-      <!-- 倒计时 -->
-      <view class="countdown-section" wx:if="{{item.countdown && !item.countdown.isExpired}}">
-        <view class="countdown-label">距开售</view>
-        <view class="countdown-timer">
-          <view class="countdown-block" wx:if="{{item.countdown.days > 0}}">
-            <text class="countdown-num">{{item.countdown.days}}</text>
-            <text class="countdown-unit">天</text>
-          </view>
-          <view class="countdown-block">
-            <text class="countdown-num">{{item.countdown.hours < 10 ? '0' + item.countdown.hours : item.countdown.hours}}</text>
-            <text class="countdown-unit">时</text>
-          </view>
-          <view class="countdown-block">
-            <text class="countdown-num">{{item.countdown.minutes < 10 ? '0' + item.countdown.minutes : item.countdown.minutes}}</text>
-            <text class="countdown-unit">分</text>
-          </view>
-          <view class="countdown-block">
-            <text class="countdown-num">{{item.countdown.seconds < 10 ? '0' + item.countdown.seconds : item.countdown.seconds}}</text>
-            <text class="countdown-unit">秒</text>
-          </view>
-        </view>
-      </view>
-      <view class="countdown-section expired" wx:elif="{{item.countdown && item.countdown.isExpired}}">
-        <text class="expired-text">已开售</text>
-      </view>
-
-      <!-- 演唱会信息 -->
-      <view class="concert-content">
-        <image
-          class="concert-poster"
-          src="{{item.poster || '/images/default-poster.png'}}"
-          mode="aspectFill"
-        />
-        <view class="concert-info">
-          <view class="concert-title ellipsis-2">{{item.title}}</view>
-          <view class="concert-meta">
-            <text class="meta-icon">📍</text>
-            <text>{{item.city}} · {{item.venue}}</text>
-          </view>
-          <view class="concert-meta" wx:if="{{item.priceRange}}">
-            <text class="meta-icon">💰</text>
-            <text class="price">¥{{item.priceRange}}</text>
-          </view>
-
-          <!-- 平台图标 -->
-          <view class="platforms">
-            <platform-icons platforms="{{item.platforms}}" size="small" />
-          </view>
-        </view>
-      </view>
-
-      <!-- 操作按钮 -->
-      <view class="concert-actions">
-        <button
-          class="btn-remind {{item.subscribed ? 'reminded' : ''}}"
-          data-concert-id="{{item._id}}"
-          catchtap="onSubscribe"
-          data-concert="{{item}}"
+  <view wx:if="{{!loading && groupedConcerts.length > 0}}" class="concert-list timeline-list">
+    <view wx:for="{{groupedConcerts}}" wx:key="timeLabel" class="timeline-group">
+      <view class="timeline-time">{{item.timeLabel}}</view>
+      <view class="timeline-group-body">
+        <view
+          wx:for="{{item.list}}"
+          wx:key="_id"
+          wx:for-item="concert"
+          class="concert-item card"
+          data-id="{{concert._id}}"
+          bindtap="onTapConcert"
         >
-          {{item.subscribed ? '已订阅提醒' : '订阅提醒'}}
-        </button>
+          <view class="countdown-section" wx:if="{{concert.countdown && !concert.countdown.isExpired}}">
+            <view class="countdown-label">距开售</view>
+            <view class="countdown-timer">
+              <view class="countdown-block" wx:if="{{concert.countdown.days > 0}}">
+                <text class="countdown-num">{{concert.countdown.days}}</text>
+                <text class="countdown-unit">天</text>
+              </view>
+              <view class="countdown-block">
+                <text class="countdown-num">{{concert.countdown.hours < 10 ? '0' + concert.countdown.hours : concert.countdown.hours}}</text>
+                <text class="countdown-unit">时</text>
+              </view>
+              <view class="countdown-block">
+                <text class="countdown-num">{{concert.countdown.minutes < 10 ? '0' + concert.countdown.minutes : concert.countdown.minutes}}</text>
+                <text class="countdown-unit">分</text>
+              </view>
+              <view class="countdown-block">
+                <text class="countdown-num">{{concert.countdown.seconds < 10 ? '0' + concert.countdown.seconds : concert.countdown.seconds}}</text>
+                <text class="countdown-unit">秒</text>
+              </view>
+            </view>
+          </view>
+          <view class="countdown-section expired" wx:elif="{{concert.countdown && concert.countdown.isExpired}}">
+            <text class="expired-text">已开售</text>
+          </view>
+
+          <view class="concert-content">
+            <image
+              class="concert-poster"
+              src="{{concert.poster || '/images/default-poster.png'}}"
+              mode="aspectFill"
+            />
+            <view class="concert-info">
+              <view class="concert-title ellipsis-2">{{concert.title}}</view>
+              <view class="concert-meta">
+                <text class="meta-icon">地点</text>
+                <text>{{concert.city}} · {{concert.venue}}</text>
+              </view>
+              <view class="concert-meta" wx:if="{{concert.priceRange}}">
+                <text class="meta-icon">¥</text>
+                <text class="price">{{concert.priceRange}}</text>
+              </view>
+
+              <view class="platforms">
+                <platform-icons platforms="{{concert.platforms}}" size="small" />
+              </view>
+            </view>
+          </view>
+
+          <view class="concert-actions">
+            <button
+              class="btn-remind {{concert.subscribed ? 'reminded' : ''}}"
+              data-concert-id="{{concert._id}}"
+              catchtap="onSubscribe"
+              data-concert="{{concert}}"
+            >
+              {{concert.subscribed ? '已订阅提醒' : '订阅提醒'}}
+            </button>
+          </view>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 空状态 -->
   <view wx:elif="{{!loading && concerts.length === 0}}" class="empty-state">
     <image src="/images/empty-calendar.png" mode="aspectFit" />
     <text>明天暂无演唱会开售</text>
     <text class="empty-tip">去首页看看其他演唱会吧</text>
   </view>
 
-  <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-state">
     <view class="loading-spinner"></view>
     <text>加载中...</text>

@@ -1,0 +1,163 @@
+﻿<!-- components/seat-map/seat-map.wxml -->
+<view class="seat-map-container">
+  <view class="venue-header">
+    <text class="venue-name">{{venueName}}</text>
+    <text class="seat-count">已加入 {{userCount}} 人</text>
+  </view>
+
+  <view class="svg-wrapper" style="height: {{svgHeight}}px;">
+    <image
+      wx:if="{{overlayImage}}"
+      class="seat-bg-image"
+      src="{{overlayImage}}"
+      mode="aspectFit"
+      style="opacity: {{overlayOpacity}};"
+    />
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="{{viewBox}}"
+      class="seat-svg"
+      style="transform: scale({{scale}});"
+    >
+      <ellipse
+        cx="{{boundary.cx}}"
+        cy="{{boundary.cy}}"
+        rx="{{boundary.rx}}"
+        ry="{{boundary.ry}}"
+        fill="none"
+        stroke="#d9dde4"
+        stroke-width="2"
+      />
+
+      <g id="stage" class="stage-group">
+        <ellipse
+          cx="{{stage.cx}}"
+          cy="{{stage.cy}}"
+          rx="{{stage.rx}}"
+          ry="{{stage.ry}}"
+          fill="#747680"
+        />
+        <text
+          x="{{stage.cx}}"
+          y="{{stage.cy}}"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          fill="#ffffff"
+          font-size="12"
+        >{{stage.label || '舞台'}}</text>
+      </g>
+
+      <g wx:for="{{areas}}" wx:key="id" class="area-group {{item.selected ? 'selected' : ''}}">
+        <polygon
+          wx:if="{{item.shapeType === 'polygon'}}"
+          class="area-shape"
+          points="{{item.points}}"
+          fill="{{item.fillColor}}"
+          stroke="{{item.strokeColor}}"
+          stroke-width="{{item.strokeWidth}}"
+          data-area-id="{{item.id}}"
+          bindtap="onAreaTap"
+        />
+        <rect
+          wx:elif="{{item.shapeType === 'rect'}}"
+          class="area-shape"
+          x="{{item.x}}"
+          y="{{item.y}}"
+          width="{{item.width}}"
+          height="{{item.height}}"
+          fill="{{item.fillColor}}"
+          stroke="{{item.strokeColor}}"
+          stroke-width="{{item.strokeWidth}}"
+          data-area-id="{{item.id}}"
+          bindtap="onAreaTap"
+        />
+        <path
+          wx:elif="{{item.shapeType === 'path'}}"
+          class="area-shape"
+          d="{{item.path}}"
+          fill="{{item.fillColor}}"
+          stroke="{{item.strokeColor}}"
+          stroke-width="{{item.strokeWidth}}"
+          data-area-id="{{item.id}}"
+          bindtap="onAreaTap"
+        />
+
+        <text
+          x="{{item.labelX}}"
+          y="{{item.labelY}}"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          fill="{{item.labelColor}}"
+          font-size="{{item.labelSize}}"
+          class="area-label"
+        >{{item.name}}</text>
+
+        <g wx:if="{{item.users.length > 0}}" class="users-group">
+          <circle
+            wx:for="{{item.users}}"
+            wx:for-item="user"
+            wx:key="id"
+            cx="{{user.x}}"
+            cy="{{user.y}}"
+            r="{{user.r || 3}}"
+            fill="{{user.color || '#ff4f6a'}}"
+            class="user-dot {{user.isMe ? 'me' : ''}}"
+          />
+        </g>
+      </g>
+
+      <g wx:for="{{priceBubbles}}" wx:key="id" class="price-bubble">
+        <rect
+          x="{{item.x - 28}}"
+          y="{{item.y - 23}}"
+          width="56"
+          height="22"
+          rx="11"
+          ry="11"
+          fill="#ffffff"
+          stroke="#d2d8e3"
+          stroke-width="1"
+        />
+        <text
+          x="{{item.x}}"
+          y="{{item.y - 8}}"
+          text-anchor="middle"
+          font-size="10"
+          fill="#2f3642"
+        >¥{{item.price}}</text>
+        <polygon
+          points="{{item.x - 4}},{{item.y}} {{item.x + 4}},{{item.y}} {{item.x}},{{item.y + 7}}"
+          fill="#ffffff"
+          stroke="#d2d8e3"
+          stroke-width="1"
+        />
+      </g>
+    </svg>
+
+    <view class="zoom-controls">
+      <button class="zoom-btn" bindtap="zoomIn">+</button>
+      <button class="zoom-btn" bindtap="zoomOut">-</button>
+      <button class="zoom-btn reset" bindtap="resetZoom">重置</button>
+    </view>
+  </view>
+
+  <view class="legend" wx:if="{{showLegend && legend.length > 0}}">
+    <view class="legend-item" wx:for="{{legend}}" wx:key="label">
+      <view class="legend-color" style="background-color: {{item.color}};"></view>
+      <text class="legend-text">{{item.label}}</text>
+    </view>
+  </view>
+
+  <view class="selected-info" wx:if="{{selectedArea}}">
+    <view class="info-header">
+      <text class="area-name">{{selectedArea.name}}</text>
+      <text class="area-price" wx:if="{{selectedArea.price}}">¥{{selectedArea.price}} 起</text>
+    </view>
+    <view class="info-stats">
+      <text>已加入 {{selectedArea.userCount || 0}} 人</text>
+      <text wx:if="{{selectedArea.rowCount}}">共 {{selectedArea.rowCount}} 排</text>
+    </view>
+    <button class="select-btn" bindtap="confirmSelection">选择该区域</button>
+  </view>
+</view>

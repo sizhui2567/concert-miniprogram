@@ -58,3 +58,19 @@ wx.cloud.init({
 
 优化设想方案：<a href="https://github.com/JaveleyQAQ/WeChatOpenDevTools-Python">JaveleyQAQ/WeChatOpenDevTools-Python（通过强制开启微信小程序开发者工具，逆向分析接口，获取信息更加高效便捷）</a>
 
+## 脚本数据导入
+
+已支持基于 `dm3.py`、`my4.py` 的数据通道：
+
+1. `dm3.py` 抓大麦并写入 `damai_full_data.db`
+2. `my4.py` 抓猫眼并导出 `data/maoyan_concerts.json`
+3. `sync_concert_sources.py` 合并成 `importConcerts` 可导入格式
+
+详细使用见：[SCRIPT_DATA_PIPELINE.md](./SCRIPT_DATA_PIPELINE.md)
+
+场景可用性检查：
+
+```bash
+python scenario_data_pipeline_check.py
+```
+

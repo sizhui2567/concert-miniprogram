@@ -1,7 +1,7 @@
 /* components/search-bar/search-bar.wxss */
 .search-bar {
   padding: 16rpx 24rpx;
-  background-color: #fff;
+  background-color: var(--ng-bg-surface);
 }
 
 .search-bar-inner {
@@ -9,7 +9,7 @@
   align-items: center;
   height: 72rpx;
   padding: 0 24rpx;
-  background-color: #f5f5f5;
+  background-color: var(--ng-bg-elevated);
   border-radius: 36rpx;
 }
 
@@ -24,17 +24,17 @@
   flex: 1;
   height: 100%;
   font-size: 28rpx;
-  color: #333;
+  color: var(--ng-text-primary);
 }
 
 .search-placeholder {
   flex: 1;
   font-size: 28rpx;
-  color: #999;
+  color: var(--ng-text-muted);
 }
 
 .placeholder {
-  color: #999;
+  color: var(--ng-text-muted);
 }
 
 .clear-btn {
@@ -50,4 +50,22 @@
   width: 32rpx;
   height: 32rpx;
   opacity: 0.5;
+}
+
+.search-bar {
+  background: var(--c-151922);
+}
+
+.search-bar-inner {
+  background: var(--c-1f2733);
+  border: 1rpx solid rgba(201, 168, 106, 0.2);
+}
+
+.search-input {
+  color: var(--c-f5f2ea);
+}
+
+.search-placeholder,
+.placeholder {
+  color: var(--c-b8b4aa);
 }

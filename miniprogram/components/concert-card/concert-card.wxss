@@ -1,64 +1,78 @@
 /* components/concert-card/concert-card.wxss */
 .concert-card {
-  margin: 20rpx;
-  border-radius: 20rpx;
+  margin: 20rpx 24rpx;
+  border-radius: var(--radius-card);
   overflow: hidden;
-  background-color: #fff;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1rpx solid rgba(23, 26, 31, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .concert-card:active {
-  transform: scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  transform: scale(0.985);
 }
 
-/* 海报区域 */
 .poster-wrapper {
   position: relative;
   width: 100%;
-  height: 300rpx;
+  height: 320rpx;
   overflow: hidden;
 }
 
 .poster {
   width: 100%;
   height: 100%;
-  transition: transform 0.3s ease;
 }
 
 .stage-badge {
   position: absolute;
-  top: 20rpx;
-  right: 20rpx;
+  top: 16rpx;
+  left: 16rpx;
 }
 
-/* 信息区域 */
 .info-wrapper {
-  padding: 24rpx;
+  position: relative;
+  padding: 22rpx;
+}
+
+.info-wrapper::before,
+.info-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 44rpx);
+  border-top: 1rpx dashed #d6dde8;
+}
+
+.info-wrapper::before {
+  top: 0;
+}
+
+.info-wrapper::after {
+  display: none;
 }
 
 .title {
   font-size: 32rpx;
+  line-height: 46rpx;
   font-weight: 600;
-  color: #333;
-  line-height: 1.4;
-  margin-bottom: 16rpx;
+  color: var(--color-text-strong);
+  margin-bottom: 14rpx;
 }
 
 .location,
 .date {
   display: flex;
   align-items: center;
-  margin-bottom: 12rpx;
-  font-size: 26rpx;
-  color: #666;
+  margin-bottom: 10rpx;
+  font-size: 24rpx;
+  color: var(--color-text-body);
 }
 
 .location .icon,
 .date .icon {
   margin-right: 8rpx;
-  font-size: 24rpx;
 }
 
 .location .text,
@@ -69,73 +83,69 @@
   white-space: nowrap;
 }
 
-/* 平台图标区域 */
 .platforms-wrapper {
-  margin: 20rpx 0;
-  padding: 16rpx 0;
-  border-top: 1rpx solid #f0f0f0;
-  border-bottom: 1rpx solid #f0f0f0;
+  margin: 16rpx 0;
+  padding: 14rpx 0;
+  border-top: 1rpx dashed #dbe2ec;
+  border-bottom: 1rpx dashed #dbe2ec;
 }
 
-/* 底部操作栏 */
 .action-bar {
   display: flex;
   align-items: center;
-  margin-top: 16rpx;
+  margin-top: 14rpx;
 }
 
 .price {
   display: flex;
   align-items: baseline;
+  color: var(--color-primary);
 }
 
 .price-label {
-  font-size: 24rpx;
-  color: #FF6B6B;
-  margin-right: 4rpx;
+  font-size: 20rpx;
 }
 
 .price-value {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #FF6B6B;
+  font-family: var(--ff-number);
+  font-size: 34rpx;
+  font-weight: 700;
 }
 
 .btn-group {
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  gap: 10rpx;
 }
 
 .btn-subscribe,
 .btn-detail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12rpx 24rpx;
-  font-size: 24rpx;
-  border-radius: 30rpx;
-  border: none;
-  line-height: 1;
   margin: 0;
-}
-
-.btn-subscribe {
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-  color: #fff;
-}
-
-.btn-subscribe.subscribed {
-  background: #f0f0f0;
-  color: #999;
-}
-
-.btn-detail {
-  background: #f5f5f5;
-  color: #666;
+  min-width: 120rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  padding: 0 16rpx;
+  border-radius: 32rpx;
+  border: none;
+  font-size: 24rpx;
 }
 
 .btn-subscribe::after,
 .btn-detail::after {
   border: none;
+}
+
+.btn-subscribe {
+  color: #ffffff;
+  background: var(--color-primary);
+}
+
+.btn-subscribe.subscribed {
+  background: var(--color-accent);
+}
+
+.btn-detail {
+  color: var(--color-primary);
+  background: #fff0ed;
+  border: 1rpx solid rgba(255, 90, 54, 0.2);
 }

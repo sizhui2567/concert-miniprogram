@@ -1,4 +1,4 @@
-// cloudfunctions/getConcertDetail/index.js
+﻿// cloudfunctions/getConcertDetail/index.js
 const cloud = require('wx-server-sdk');
 
 cloud.init({
@@ -7,23 +7,19 @@ cloud.init({
 
 const db = cloud.database();
 
-exports.main = async (event, context) => {
+exports.main = async (event) => {
   const { concertId } = event;
   const { OPENID } = cloud.getWXContext();
 
   if (!concertId) {
     return {
       code: -1,
-      message: '缺少演唱会ID'
+      message: '缺少演唱会 ID'
     };
   }
 
   try {
-    // 获取演唱会详情
-    const concertResult = await db.collection('concerts')
-      .doc(concertId)
-      .get();
-
+    const concertResult = await db.collection('concerts').doc(concertId).get();
     if (!concertResult.data) {
       return {
         code: -1,
@@ -33,12 +29,8 @@ exports.main = async (event, context) => {
 
     const concert = concertResult.data;
 
-    // 检查用户是否订阅
     if (OPENID) {
-      const userResult = await db.collection('users')
-        .where({ _id: OPENID })
-        .get();
-
+      const userResult = await db.collection('users').where({ _id: OPENID }).get();
       if (userResult.data.length > 0) {
         const user = userResult.data[0];
         concert.subscribed = (user.subscriptions || []).includes(concertId);

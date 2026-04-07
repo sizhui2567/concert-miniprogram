@@ -1,0 +1,35 @@
+# --- Personal / Local privacy ---
+project.private.config.json
+.env
+.env.*
+!.env.example
+*.local
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+**/node_modules/
+miniprogram_npm/
+
+# Build artifacts
+dist/
+build/
+coverage/
+tmp/
+temp/
+
+# Local databases and exports
+*.db
+*.sqlite
+*.sqlite3
+

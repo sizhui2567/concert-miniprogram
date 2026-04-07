@@ -1,18 +1,12 @@
-<!-- pages/admin/edit/edit.wxml -->
+﻿<!-- pages/admin/edit/edit.wxml -->
 <view class="container">
   <view class="form">
-    <!-- 基本信息 -->
     <view class="form-section">
       <view class="section-title">基本信息</view>
 
       <view class="form-item">
         <text class="form-label required">演唱会名称</text>
-        <input
-          class="form-input"
-          placeholder="请输入演唱会名称"
-          value="{{formData.title}}"
-          bindinput="onInputTitle"
-        />
+        <input class="form-input" placeholder="请输入演唱会名称" value="{{formData.title}}" bindinput="onInputTitle" />
       </view>
 
       <view class="form-item">
@@ -21,7 +15,7 @@
           <view class="form-picker">
             <text wx:if="{{formData.artist}}">{{formData.artist}}</text>
             <text wx:else class="placeholder">请选择艺人</text>
-            <image class="picker-arrow" src="/images/icon-arrow-down.png" mode="aspectFit" />
+            <text class="picker-arrow">></text>
           </view>
         </picker>
       </view>
@@ -32,32 +26,23 @@
           <view class="form-picker">
             <text wx:if="{{formData.city}}">{{formData.city}}</text>
             <text wx:else class="placeholder">请选择城市</text>
-            <image class="picker-arrow" src="/images/icon-arrow-down.png" mode="aspectFit" />
+            <text class="picker-arrow">></text>
           </view>
         </picker>
       </view>
 
       <view class="form-item">
         <text class="form-label required">场馆</text>
-        <input
-          class="form-input"
-          placeholder="请输入场馆名称"
-          value="{{formData.venue}}"
-          bindinput="onInputVenue"
-        />
+        <input class="form-input" placeholder="请输入场馆名称" value="{{formData.venue}}" bindinput="onInputVenue" />
       </view>
 
       <view class="form-item">
         <text class="form-label required">演出日期</text>
         <view class="dates-wrapper">
           <view class="date-tags">
-            <view
-              wx:for="{{selectedDates}}"
-              wx:key="*this"
-              class="date-tag"
-            >
+            <view wx:for="{{selectedDates}}" wx:key="*this" class="date-tag">
               <text>{{item}}</text>
-              <text class="date-remove" data-date="{{item}}" bindtap="onRemoveDate">×</text>
+              <text class="date-remove" data-date="{{item}}" bindtap="onRemoveDate">x</text>
             </view>
           </view>
           <picker mode="date" bindchange="onSelectDate">
@@ -68,39 +53,26 @@
 
       <view class="form-item">
         <text class="form-label">价格区间</text>
-        <input
-          class="form-input"
-          placeholder="如：380-1880"
-          value="{{formData.priceRange}}"
-          bindinput="onInputPrice"
-        />
+        <input class="form-input" placeholder="如：380-1880" value="{{formData.priceRange}}" bindinput="onInputPrice" />
       </view>
     </view>
 
-    <!-- 阶段状态 -->
     <view class="form-section">
       <view class="section-title">阶段状态</view>
-
       <view class="form-item">
         <text class="form-label required">当前阶段</text>
         <picker mode="selector" range="{{stages}}" bindchange="onSelectStage">
           <view class="form-picker">
             <text>{{formData.stage}}</text>
-            <image class="picker-arrow" src="/images/icon-arrow-down.png" mode="aspectFit" />
+            <text class="picker-arrow">></text>
           </view>
         </picker>
       </view>
     </view>
 
-    <!-- 购票平台 -->
     <view class="form-section">
       <view class="section-title">购票平台</view>
-
-      <view
-        wx:for="{{platformList}}"
-        wx:key="*this"
-        class="platform-form-item"
-      >
+      <view wx:for="{{platformList}}" wx:key="*this" class="platform-form-item">
         <view class="platform-header">
           <view
             class="platform-checkbox {{formData.platforms[item].available ? 'checked' : ''}}"
@@ -109,7 +81,7 @@
           >
             <view class="checkbox-inner"></view>
           </view>
-          <text class="platform-name">{{item === 'damai' ? '大麦' : item === 'maoyan' ? '猫眼' : item === 'douyin' ? '抖音' : item === 'xiecheng' ? '携程' : '票星球'}}</text>
+          <text class="platform-name">{{platformLabelMap[item] || item}}</text>
         </view>
 
         <view class="platform-fields" wx:if="{{formData.platforms[item].available}}">
@@ -122,7 +94,7 @@
           />
           <input
             class="platform-input"
-            placeholder="开售时间 (如: 2026-01-20 10:00)"
+            placeholder="开售时间（如：2026-01-20 10:00）"
             value="{{formData.platforms[item].openTime}}"
             data-platform="{{item}}"
             bindinput="onInputPlatformTime"
@@ -131,24 +103,177 @@
       </view>
     </view>
 
-    <!-- 海报图片 -->
     <view class="form-section">
       <view class="section-title">海报图片</view>
-
       <view class="poster-wrapper">
         <view wx:if="{{formData.poster}}" class="poster-preview">
           <image class="poster-image" src="{{formData.poster}}" mode="aspectFill" />
-          <view class="poster-remove" bindtap="onRemovePoster">×</view>
+          <view class="poster-remove" bindtap="onRemovePoster">x</view>
         </view>
         <view wx:else class="poster-upload" bindtap="onChoosePoster">
-          <image class="upload-icon" src="/images/icon-upload.png" mode="aspectFit" />
+          <text class="upload-plus">+</text>
           <text>上传海报</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">交互座位图生成</view>
+
+      <view class="seat-source-wrap">
+        <view wx:if="{{formData.seatMapSourceImage}}" class="seat-source-preview">
+          <image class="seat-source-image" src="{{formData.seatMapSourceImage}}" mode="aspectFit" />
+          <view class="seat-source-meta" wx:if="{{seatMapImageMeta}}">
+            <text>{{seatMapImageMeta.width}} x {{seatMapImageMeta.height}}</text>
+          </view>
+        </view>
+        <view wx:else class="seat-source-upload" bindtap="onChooseSeatMapSourceImage">
+          <text class="upload-plus">+</text>
+          <text>上传座位图（图1）</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">场景模板</text>
+        <picker mode="selector" range="{{seatMapPresets}}" range-key="name" value="{{presetIndex}}" bindchange="onSelectSeatMapPreset">
+          <view class="form-picker">
+            <text>{{seatMapPresets[presetIndex].name}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+        <text class="preset-desc">{{seatMapPresets[presetIndex].description}}</text>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">回退模板（质量不达标时）</text>
+        <picker mode="selector" range="{{seatMapPresets}}" range-key="name" value="{{fallbackPresetIndex}}" bindchange="onSelectFallbackPreset">
+          <view class="form-picker">
+            <text>{{seatMapPresets[fallbackPresetIndex].name}}</text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="seat-action-row">
+        <button class="seat-btn secondary" bindtap="onChooseSeatMapSourceImage">重新上传</button>
+        <button class="seat-btn primary" loading="{{generatingSeatMap}}" bindtap="onGenerateSeatMap">一键生成交互图（图2）</button>
+      </view>
+
+      <view class="generator-grid">
+        <view class="generator-item">
+          <text class="generator-label">环数</text>
+          <input class="generator-input" type="number" data-key="ringCount" value="{{generatorOptions.ringCount}}" bindinput="onInputGeneratorOption" />
+        </view>
+        <view class="generator-item">
+          <text class="generator-label">每环分区数</text>
+          <input class="generator-input" type="number" data-key="sectorCount" value="{{generatorOptions.sectorCount}}" bindinput="onInputGeneratorOption" />
+        </view>
+        <view class="generator-item">
+          <text class="generator-label">起始角</text>
+          <input class="generator-input" type="number" data-key="startAngle" value="{{generatorOptions.startAngle}}" bindinput="onInputGeneratorOption" />
+        </view>
+        <view class="generator-item">
+          <text class="generator-label">结束角</text>
+          <input class="generator-input" type="number" data-key="endAngle" value="{{generatorOptions.endAngle}}" bindinput="onInputGeneratorOption" />
+        </view>
+        <view class="generator-item">
+          <text class="generator-label">底图透明度</text>
+          <input class="generator-input" type="digit" data-key="overlayOpacity" value="{{generatorOptions.overlayOpacity}}" bindinput="onInputGeneratorOption" />
+        </view>
+      </view>
+
+      <view class="quality-panel" wx:if="{{qualityReport}}">
+        <view class="quality-head">
+          <text class="quality-title">质量评分：{{qualityReport.score}}</text>
+          <text class="quality-status {{qualityReport.ok ? 'ok' : 'bad'}}">{{qualityReport.ok ? '通过' : '待优化'}}</text>
+        </view>
+        <view class="quality-fallback" wx:if="{{qualityReport.usedFallback}}">
+          <text>已自动回退至模板：{{qualityReport.fallbackPresetKey}}</text>
+        </view>
+        <view class="quality-list" wx:if="{{qualityReport.fatals.length}}">
+          <view class="quality-item bad" wx:for="{{qualityReport.fatals}}" wx:key="*this">{{item}}</view>
+        </view>
+        <view class="quality-list" wx:if="{{qualityReport.warnings.length}}">
+          <view class="quality-item" wx:for="{{qualityReport.warnings}}" wx:key="*this">{{item}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{formData.seatMap}}" class="seat-preview-block">
+        <view class="seat-preview-head">
+          <text class="seat-preview-title">交互预览（点击分区可选中）</text>
+          <text class="seat-preview-clear" bindtap="onClearSeatMap">清空</text>
+        </view>
+
+        <seat-map
+          venueName="{{formData.venue || '场馆'}}"
+          userCount="0"
+          seatData="{{formData.seatMap}}"
+          selectedAreaId="{{selectedPreviewAreaId}}"
+          bind:areaSelect="onPreviewSeatAreaSelect"
+          bind:confirm="onPreviewSeatAreaConfirm"
+        />
+
+        <view class="micro-adjust-panel">
+          <view class="micro-title">舞台/边界微调</view>
+          <view class="micro-row">
+            <text class="micro-label">舞台位置</text>
+            <button class="micro-btn" data-axis="x" data-delta="-8" bindtap="onNudgeStage">左</button>
+            <button class="micro-btn" data-axis="x" data-delta="8" bindtap="onNudgeStage">右</button>
+            <button class="micro-btn" data-axis="y" data-delta="-8" bindtap="onNudgeStage">上</button>
+            <button class="micro-btn" data-axis="y" data-delta="8" bindtap="onNudgeStage">下</button>
+          </view>
+          <view class="micro-row">
+            <text class="micro-label">舞台大小</text>
+            <button class="micro-btn" data-factor="0.92" bindtap="onScaleStage">缩小</button>
+            <button class="micro-btn" data-factor="1.08" bindtap="onScaleStage">放大</button>
+          </view>
+          <view class="micro-row">
+            <text class="micro-label">看台边界</text>
+            <button class="micro-btn" data-factor="0.95" bindtap="onScaleBoundary">收缩</button>
+            <button class="micro-btn" data-factor="1.05" bindtap="onScaleBoundary">扩展</button>
+          </view>
+        </view>
+
+        <view class="seat-preview-selected" wx:if="{{selectedPreviewArea}}">
+          <text class="seat-selected-name">已选分区：{{selectedPreviewArea.name}}</text>
+          <text class="seat-selected-price" wx:if="{{selectedPreviewArea.price}}">¥{{selectedPreviewArea.price}}</text>
+        </view>
+
+        <view class="area-editor" wx:if="{{selectedPreviewArea}}">
+          <view class="micro-title">分区编辑</view>
+          <view class="generator-grid">
+            <view class="generator-item">
+              <text class="generator-label">分区名</text>
+              <input class="generator-input" value="{{areaEditor.name}}" bindinput="onInputAreaName" />
+            </view>
+            <view class="generator-item">
+              <text class="generator-label">票价</text>
+              <input class="generator-input" type="number" value="{{areaEditor.price}}" bindinput="onInputAreaPrice" />
+            </view>
+            <view class="generator-item">
+              <text class="generator-label">分区类型</text>
+              <picker mode="selector" range="{{areaTypeLabels}}" value="{{areaTypeIndex}}" bindchange="onSelectAreaType">
+                <view class="form-picker compact">
+                  <text>{{areaTypeLabels[areaTypeIndex]}}</text>
+                  <text class="picker-arrow">></text>
+                </view>
+              </picker>
+            </view>
+            <view class="generator-item">
+              <text class="generator-label">禁用</text>
+              <switch checked="{{areaEditor.disabled}}" bindchange="onSwitchAreaDisabled" color="#ff5c62" />
+            </view>
+          </view>
+
+          <view class="seat-action-row area-actions">
+            <button class="seat-btn secondary" bindtap="onApplyAreaToSelected">应用到当前分区</button>
+            <button class="seat-btn primary" bindtap="onApplyAreaToRing">应用到同环分区</button>
+          </view>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 底部按钮 -->
   <view class="action-bar safe-area-bottom">
     <button class="btn-draft" bindtap="onSaveDraft">保存草稿</button>
     <button class="btn-publish" bindtap="onPublish">发布</button>

@@ -35,7 +35,63 @@ Page({
     loading: false,
     refreshing: false,
     notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFS },
-    savingPrefs: false
+    savingPrefs: false,
+    overviewStats: {
+      totalSubscriptions: 0,
+      upcomingCount: 0,
+      artistCount: 0
+    }
+  },
+
+  formatTimeAxisLabel(openTime) {
+    if (!openTime) return '待公布';
+    const date = new Date(openTime);
+    if (!Number.isFinite(date.getTime())) return '待公布';
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  },
+
+  normalizeConcertCard(concert = {}) {
+    const platformMap = concert.platforms || {};
+    const platformKeys = Object.keys(platformMap);
+    const openTime = platformKeys
+      .map((key) => (platformMap[key] && platformMap[key].openTime) || '')
+      .find((value) => !!value);
+
+    const availablePlatforms = Array.isArray(concert.availablePlatforms) && concert.availablePlatforms.length
+      ? concert.availablePlatforms
+      : platformKeys.filter((key) => platformMap[key] && platformMap[key].available);
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const isUpcoming = Array.isArray(concert.dates) && concert.dates.some((d) => {
+      const t = new Date(d).getTime();
+      return Number.isFinite(t) && t >= todayStart.getTime();
+    });
+
+    return {
+      ...concert,
+      openTimeDisplay: openTime || '待公布',
+      timeAxisLabel: this.formatTimeAxisLabel(openTime),
+      platformsDisplay: availablePlatforms.length ? availablePlatforms.join(' / ') : '待公布',
+      stageLabel: concert.stage || '待更新',
+      cityVenueDisplay: `${concert.city || '待定'} · ${concert.venue || '待定'}`,
+      isUpcoming: isUpcoming || concert.stage !== '已结束'
+    };
+  },
+
+  updateOverviewStats(partial = {}) {
+    const concerts = partial.concerts || this.data.concerts || [];
+    const artists = partial.artists || this.data.artists || [];
+    const upcomingCount = concerts.filter((item) => !!item.isUpcoming).length;
+    this.setData({
+      overviewStats: {
+        totalSubscriptions: concerts.length,
+        upcomingCount,
+        artistCount: artists.length
+      }
+    });
   },
 
   onLoad() {
@@ -86,12 +142,14 @@ Page({
 
     try {
       const result = await api.getSubscriptions(1, PAGE_SIZE);
+      const concerts = (result.list || []).map((item) => this.normalizeConcertCard(item));
       this.setData({
-        concerts: result.list || [],
+        concerts,
         page: 1,
-        hasMore: (result.list || []).length >= PAGE_SIZE,
+        hasMore: concerts.length >= PAGE_SIZE,
         notificationPrefs: normalizeNotificationPrefs(result.notificationPrefs)
       });
+      this.updateOverviewStats({ concerts });
     } catch (err) {
       console.error('加载订阅失败:', err);
       showToast('加载失败');
@@ -107,12 +165,14 @@ Page({
 
     try {
       const result = await api.getSubscriptions(page + 1, PAGE_SIZE);
-      const newList = result.list || [];
+      const newList = (result.list || []).map((item) => this.normalizeConcertCard(item));
+      const merged = [...concerts, ...newList];
       this.setData({
-        concerts: [...concerts, ...newList],
+        concerts: merged,
         page: page + 1,
         hasMore: newList.length >= PAGE_SIZE
       });
+      this.updateOverviewStats({ concerts: merged });
     } catch (err) {
       console.error('加载更多失败:', err);
       showToast('加载失败');
@@ -186,7 +246,9 @@ Page({
 
     try {
       const artists = await api.getFollowingArtists();
-      this.setData({ artists: artists || [] });
+      const nextArtists = artists || [];
+      this.setData({ artists: nextArtists });
+      this.updateOverviewStats({ artists: nextArtists });
     } catch (err) {
       console.error('加载关注艺人失败:', err);
       showToast('加载失败');
@@ -210,14 +272,17 @@ Page({
 
   // 取消订阅演唱会
   async onCancelSubscribe(e) {
-    const { concert } = e.detail;
+    const fromDetail = e.detail && e.detail.concert;
+    const fromDataset = e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.concert;
+    const concert = fromDetail || fromDataset;
+    if (!concert || !concert._id) return;
 
     try {
       await api.subscribeConcert(concert._id, false);
 
-      // 从列表中移除
       const concerts = this.data.concerts.filter(item => item._id !== concert._id);
       this.setData({ concerts });
+      this.updateOverviewStats({ concerts });
 
       showToast('已取消订阅');
     } catch (err) {
@@ -233,9 +298,9 @@ Page({
     try {
       await api.followArtist(artistId, false);
 
-      // 从列表中移除
       const artists = this.data.artists.filter(item => item._id !== artistId);
       this.setData({ artists });
+      this.updateOverviewStats({ artists });
 
       showToast('已取消关注');
     } catch (err) {
@@ -246,9 +311,17 @@ Page({
 
   // 查看艺人演唱会
   onTapArtist(e) {
-    const { artistId, name } = e.currentTarget.dataset;
+    const { name } = e.currentTarget.dataset;
     wx.navigateTo({
       url: `/pages/search/search?keyword=${name}`
+    });
+  },
+
+  onTapConcert(e) {
+    const { id } = e.currentTarget.dataset;
+    if (!id) return;
+    wx.navigateTo({
+      url: `/pages/detail/detail?id=${id}`
     });
   }
 });

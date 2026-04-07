@@ -1,0 +1,9 @@
+{
+  "name": "init-simple",
+  "version": "1.0.0",
+  "description": "极简数据初始化，避免超时",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~3.0.1"
+  }
+}

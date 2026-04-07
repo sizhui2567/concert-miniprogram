@@ -1,0 +1,9 @@
+{
+  "name": "moderateContent",
+  "version": "1.0.0",
+  "description": "内容审核、置顶、禁言等运营管理",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

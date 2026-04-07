@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "新增演唱会",
-  "usingComponents": {}
+  "usingComponents": {
+    "seat-map": "/components/seat-map/seat-map"
+  }
 }

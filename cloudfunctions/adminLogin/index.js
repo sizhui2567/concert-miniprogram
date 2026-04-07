@@ -7,8 +7,8 @@ cloud.init({
 
 const db = cloud.database();
 
-// 管理员密码（实际使用时应该存储在数据库或环境变量中）
-const ADMIN_PASSWORD = 'admin123456';
+// 管理员密码从环境变量读取，避免硬编码到仓库
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 exports.main = async (event, context) => {
   const { password } = event;
@@ -18,6 +18,14 @@ exports.main = async (event, context) => {
     return {
       code: -1,
       message: '请输入密码'
+    };
+  }
+
+  if (!ADMIN_PASSWORD) {
+    return {
+      code: -1,
+      message: '管理员密码未配置，请联系维护者设置 ADMIN_PASSWORD',
+      data: { success: false }
     };
   }
 

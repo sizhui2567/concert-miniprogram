@@ -1,0 +1,109 @@
+﻿{
+  "version": "seat-map-seat-v1",
+  "venue": {
+    "name": "示例体育馆",
+    "city": "上海"
+  },
+  "viewBox": "0 0 620 570",
+  "width": 620,
+  "height": 570,
+  "stage": {
+    "cx": 310,
+    "cy": 300,
+    "rx": 85,
+    "ry": 45,
+    "label": "舞台"
+  },
+  "boundary": {
+    "cx": 310,
+    "cy": 300,
+    "rx": 295,
+    "ry": 245
+  },
+  "seatLocator": {
+    "supportedInputExamples": [
+      "101区12排8座",
+      "101-12-8",
+      "内场A区 3排 12",
+      "FLOOR-A-3-12"
+    ],
+    "defaultSeatStart": 1,
+    "defaultRowStart": 1
+  },
+  "areas": [
+    {
+      "id": "stand-101",
+      "name": "101区",
+      "type": "stand",
+      "shapeType": "polygon",
+      "points": "120,200 230,185 255,285 140,320",
+      "labelX": 190,
+      "labelY": 250,
+      "price": 980,
+      "seatModel": {
+        "mode": "grid",
+        "areaAlias": ["101", "101区", "看台101", "A101"],
+        "rowStart": 1,
+        "rowCount": 20,
+        "seatStart": 1,
+        "defaultSeatsPerRow": 26,
+        "perRowSeatCounts": [26, 26, 26, 26, 26, 26, 24, 24, 24, 24, 24, 22, 22, 22, 22, 20, 20, 20, 18, 18],
+        "anchor": { "x": 145, "y": 305 },
+        "rowVector": { "x": 3.4, "y": -5.6 },
+        "seatVector": { "x": 3.7, "y": -0.9 },
+        "zigzagByRow": true
+      }
+    },
+    {
+      "id": "stand-102",
+      "name": "102区",
+      "type": "stand",
+      "shapeType": "polygon",
+      "points": "390,185 500,200 480,320 365,285",
+      "labelX": 432,
+      "labelY": 250,
+      "price": 980,
+      "seatModel": {
+        "mode": "grid",
+        "areaAlias": ["102", "102区", "看台102", "A102"],
+        "rowStart": 1,
+        "rowCount": 20,
+        "seatStart": 1,
+        "defaultSeatsPerRow": 26,
+        "anchor": { "x": 475, "y": 305 },
+        "rowVector": { "x": -3.4, "y": -5.6 },
+        "seatVector": { "x": -3.7, "y": -0.9 },
+        "zigzagByRow": true
+      }
+    },
+    {
+      "id": "floor-a",
+      "name": "内场A区",
+      "type": "floor",
+      "shapeType": "polygon",
+      "points": "250,255 370,255 395,360 225,360",
+      "labelX": 310,
+      "labelY": 315,
+      "price": 1680,
+      "seatModel": {
+        "mode": "hybrid",
+        "areaAlias": ["内场A", "内场A区", "A区", "FLOOR-A"],
+        "rule": {
+          "rowStart": 1,
+          "rowCount": 16,
+          "seatStart": 1,
+          "defaultSeatsPerRow": 20,
+          "anchor": { "x": 240, "y": 350 },
+          "rowVector": { "x": 0, "y": -5.4 },
+          "seatVector": { "x": 6.1, "y": 0 },
+          "zigzagByRow": false
+        },
+        "pointSeats": [
+          { "seatKey": "1-1", "x": 242, "y": 350 },
+          { "seatKey": "1-2", "x": 248, "y": 350 },
+          { "seatKey": "2-1", "x": 242, "y": 344.6 }
+        ]
+      }
+    }
+  ]
+}

@@ -44,7 +44,7 @@
         "swc": false,
         "disableSWC": true
     },
-    "appid": "",
+    "appid": "touristappid",
     "projectname": "concert-miniprogram",
     "libVersion": "2.25.0",
     "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",

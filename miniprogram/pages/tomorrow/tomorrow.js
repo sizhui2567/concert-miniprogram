@@ -5,6 +5,7 @@ const { showToast, getCountdown, formatDate } = require('../../utils/util');
 Page({
   data: {
     concerts: [],
+    groupedConcerts: [],
     loading: true,
     refreshing: false,
     tomorrowDate: '',
@@ -64,10 +65,15 @@ Page({
       concerts.sort((a, b) => {
         const timeA = this.getEarliestOpenTime(a.platforms);
         const timeB = this.getEarliestOpenTime(b.platforms);
-        return new Date(timeA) - new Date(timeB);
+        const tsA = Number.isFinite(new Date(timeA).getTime()) ? new Date(timeA).getTime() : Number.MAX_SAFE_INTEGER;
+        const tsB = Number.isFinite(new Date(timeB).getTime()) ? new Date(timeB).getTime() : Number.MAX_SAFE_INTEGER;
+        return tsA - tsB;
       });
 
-      this.setData({ concerts });
+      this.setData({
+        concerts,
+        groupedConcerts: this.groupConcertsByOpenTime(concerts)
+      });
       this.startCountdownTimer();
     } catch (err) {
       console.error('加载失败:', err);
@@ -99,6 +105,41 @@ Page({
     return getCountdown(openTime);
   },
 
+  formatTimeLabel(openTime) {
+    if (!openTime) return '待公布';
+    const date = new Date(openTime);
+    if (!Number.isFinite(date.getTime())) return '待公布';
+    const hh = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  },
+
+  groupConcertsByOpenTime(concerts = []) {
+    const groups = {};
+    concerts.forEach((concert) => {
+      const openTime = this.getEarliestOpenTime(concert.platforms);
+      const timeLabel = this.formatTimeLabel(openTime);
+      if (!groups[timeLabel]) {
+        groups[timeLabel] = {
+          timeLabel,
+          sortTime: openTime ? new Date(openTime).getTime() : Number.MAX_SAFE_INTEGER,
+          list: []
+        };
+      }
+      groups[timeLabel].list.push({
+        ...concert,
+        openTimeLabel: timeLabel
+      });
+    });
+
+    return Object.values(groups)
+      .sort((a, b) => a.sortTime - b.sortTime)
+      .map((group) => ({
+        timeLabel: group.timeLabel,
+        list: group.list
+      }));
+  },
+
   // 启动倒计时定时器
   startCountdownTimer() {
     this.clearCountdownTimer();
@@ -108,7 +149,10 @@ Page({
         ...concert,
         countdown: this.calculateCountdown(concert.platforms)
       }));
-      this.setData({ concerts });
+      this.setData({
+        concerts,
+        groupedConcerts: this.groupConcertsByOpenTime(concerts)
+      });
     }, 1000);
   },
 
@@ -122,8 +166,14 @@ Page({
 
   // 订阅演唱会
   async onSubscribe(e) {
-    const { concert } = e.detail;
+    const fromDetail = e.detail && e.detail.concert;
+    const fromDataset = e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.concert;
+    const concert = fromDetail || fromDataset;
     const app = getApp();
+
+    if (!concert || !concert._id) {
+      return;
+    }
 
     if (!app.globalData.openid) {
       showToast('请先登录');
@@ -141,7 +191,10 @@ Page({
         return item;
       });
 
-      this.setData({ concerts });
+      this.setData({
+        concerts,
+        groupedConcerts: this.groupConcertsByOpenTime(concerts)
+      });
       showToast(subscribed ? '订阅成功，开售前会提醒您' : '已取消订阅');
     } catch (err) {
       console.error('订阅失败:', err);

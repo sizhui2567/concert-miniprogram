@@ -33,6 +33,8 @@
         <text class="stat-label">关注艺人</text>
       </view>
     </view>
+
+    <view class="profile-tip">你的订阅提醒会优先出现在开售前窗口，建议保持通知开启。</view>
   </view>
 
   <!-- 功能列表 -->

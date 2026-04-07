@@ -1,49 +1,64 @@
 <!-- pages/detail/detail.wxml -->
 <view class="container" wx:if="{{!loading && concert}}">
-  <!-- 海报 -->
   <view class="poster-section" bindtap="onPreviewPoster">
-    <image
-      class="poster"
-      src="{{concert.poster || '/images/default-poster.png'}}"
-      mode="aspectFill"
-    />
+    <image class="poster" src="{{concert.poster || '/images/default-poster.svg'}}" mode="aspectFill" />
     <view class="poster-overlay">
       <stage-tag stage="{{concert.stage}}" size="large" />
     </view>
   </view>
 
-  <!-- 基本信息 -->
-  <view class="info-section card">
-    <view class="title">{{concert.title}}</view>
-    <view class="artist" wx:if="{{concert.artist}}">
-      <text class="label">艺人:</text>
-      <text class="value">{{concert.artist}}</text>
-    </view>
-    <view class="info-row">
-      <text class="icon">📍</text>
-      <text class="text">{{concert.city}} · {{concert.venue}}</text>
-    </view>
-    <view class="info-row">
-      <text class="icon">📅</text>
-      <text class="text">{{concert.dateDisplay}}</text>
-    </view>
-    <view class="info-row" wx:if="{{concert.priceRange}}">
-      <text class="icon">💰</text>
-      <text class="text price">¥{{concert.priceRange}}</text>
+  <view class="info-section card hero-card">
+    <view class="hero-head">
+      <view class="hero-title-wrap">
+        <view class="title">{{concert.title}}</view>
+        <view class="artist" wx:if="{{concert.artist}}">
+          <text class="value">{{concert.artist}}</text>
+        </view>
+      </view>
+      <button class="hero-subscribe-btn {{concert.subscribed ? 'subscribed' : ''}}" bindtap="onToggleSubscribe">
+        {{concert.subscribed ? '已订阅提醒' : '立即订阅提醒'}}
+      </button>
     </view>
 
-    <!-- 演出日期详情 -->
+    <view class="hero-meta-grid">
+      <view class="hero-meta-item">
+        <text class="hero-meta-label">场馆</text>
+        <text class="hero-meta-value">{{concert.city}} · {{concert.venue}}</text>
+      </view>
+      <view class="hero-meta-item">
+        <text class="hero-meta-label">场次时间</text>
+        <text class="hero-meta-value">{{concert.dateDisplay}}</text>
+      </view>
+    </view>
+
+    <view class="hero-trust-copy">开售前提醒 / 状态变化提醒 / 可随时取消</view>
+
     <view class="dates-detail" wx:if="{{concert.datesFormatted && concert.datesFormatted.length > 1}}">
-      <view class="dates-title">演出日期</view>
+      <view class="dates-title">全部场次</view>
       <view class="dates-list">
-        <view class="date-item" wx:for="{{concert.datesFormatted}}" wx:key="*this">
-          {{item}}
-        </view>
+        <view class="date-item" wx:for="{{concert.datesFormatted}}" wx:key="*this">{{item}}</view>
       </view>
     </view>
   </view>
 
-  <!-- 购票平台 -->
+  <view class="decision-section card">
+    <view class="decision-title">关键信息</view>
+    <view class="decision-grid">
+      <view class="decision-item">
+        <text class="decision-label">开售时间</text>
+        <text class="decision-value">{{concert.platforms.damai.openTime || concert.platforms.maoyan.openTime || '待公布'}}</text>
+      </view>
+      <view class="decision-item">
+        <text class="decision-label">票价区间</text>
+        <text class="decision-value">{{concert.priceRange ? '¥' + concert.priceRange : '待公布'}}</text>
+      </view>
+      <view class="decision-item decision-item-wide">
+        <text class="decision-label">开售平台</text>
+        <text class="decision-value">{{concert.availablePlatformsDisplay || '待公布'}}</text>
+      </view>
+    </view>
+  </view>
+
   <view class="platforms-section card">
     <view class="section-title">购票平台</view>
     <view class="platform-list">
@@ -58,26 +73,435 @@
         <view class="platform-info">
           <text class="platform-name">{{platforms[item].name}}</text>
           <text class="platform-status" wx:if="{{concert.platforms[item] && concert.platforms[item].available}}">
-            {{concert.platforms[item].openTime ? '开售时间: ' + concert.platforms[item].openTime : '已开售'}}
+            {{concert.platforms[item].openTime ? 'Open: ' + concert.platforms[item].openTime : 'On Sale'}}
           </text>
-          <text class="platform-status unavailable" wx:else>暂未开售</text>
+          <text class="platform-status unavailable" wx:else>Not Open</text>
         </view>
         <view class="platform-action" wx:if="{{concert.platforms[item] && concert.platforms[item].available}}">
-          <text class="action-text">复制链接</text>
+          <text class="action-text">Copy Link</text>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 阶段时间线 -->
+  <view id="seatMapSection" class="seat-map-section card" wx:if="{{concert.seatMap && concert.seatMap.areas && concert.seatMap.areas.length}}">
+    <view class="section-title">互动座位图</view>
+    <view class="seat-map-inner">
+      <view class="seat-locate-panel">
+        <view class="seat-locate-title">输入座位号定位自己</view>
+        <view class="seat-locate-row">
+          <input
+            class="seat-locate-input"
+            placeholder="例如：101区12排8座 或 101-12-8"
+            value="{{seatInput}}"
+            bindinput="onSeatInputChange"
+            bindconfirm="onLocateSeat"
+            confirm-type="search"
+          />
+          <button class="seat-locate-btn" bindtap="onLocateSeat">定位</button>
+        </view>
+        <text class="seat-locate-hint">支持：101区12排8座、101-12-8、内场A区3排12座</text>
+
+        <view class="seat-locate-result" wx:if="{{seatLocateResult}}">
+          <text class="seat-locate-ok">已定位：{{seatLocateResult.areaName}} {{seatLocateResult.row}}排{{seatLocateResult.seat}}座</text>
+          <text class="seat-locate-clear" bindtap="onClearSeatLocate">清除</text>
+        </view>
+        <text class="seat-locate-error" wx:if="{{seatLocateError}}">{{seatLocateError}}</text>
+      </view>
+
+      <seat-map
+        id="seatMapComp"
+        venueName="{{concert.venue || 'Venue'}}"
+        userCount="{{concert.subscribeCount || 0}}"
+        seatData="{{concert.seatMap}}"
+        selectedAreaId="{{selectedAreaId}}"
+        bind:areaSelect="onSeatAreaSelect"
+        bind:confirm="onSeatAreaConfirm"
+      />
+
+      <view class="seat-selected-info" wx:if="{{selectedSeatArea}}">
+        <text class="seat-selected-name">已选分区：{{selectedSeatArea.name}}</text>
+        <text class="seat-selected-price" wx:if="{{selectedSeatArea.price}}">¥{{selectedSeatArea.price}}</text>
+      </view>
+
+      <view class="seat-share-panel">
+        <view class="seat-share-title">分享你的座位视野（帮助后来人）</view>
+
+        <view class="seat-share-rating-row">
+          <text class="seat-share-rating-label">视野评分</text>
+          <picker
+            mode="selector"
+            range="{{seatViewRatingOptions}}"
+            range-key="label"
+            value="{{seatViewRatingIndex}}"
+            bindchange="onSeatViewRatingChange"
+          >
+            <view class="seat-share-rating-picker">{{seatViewRatingOptions[seatViewRatingIndex].label}}</view>
+          </picker>
+        </view>
+
+        <textarea
+          class="seat-share-note"
+          placeholder="说说这个位置视野如何，例如：舞台无遮挡、侧屏可见、音响偏左..."
+          value="{{seatViewNote}}"
+          maxlength="220"
+          bindinput="onInputSeatViewNote"
+        />
+
+        <view class="seat-share-images">
+          <view
+            class="seat-upload-item"
+            wx:for="{{seatViewImages}}"
+            wx:key="*this"
+          >
+            <image
+              class="seat-upload-img"
+              src="{{item}}"
+              mode="aspectFill"
+              data-index="{{index}}"
+              bindtap="onPreviewUploadImage"
+            />
+            <view class="seat-upload-remove" data-index="{{index}}" bindtap="onRemoveSeatViewImage">×</view>
+          </view>
+
+          <view
+            class="seat-upload-add"
+            wx:if="{{seatViewImages.length < 3}}"
+            bindtap="onChooseSeatViewImages"
+          >
+            <text class="seat-upload-plus">+</text>
+            <text class="seat-upload-text">上传视野图</text>
+          </view>
+        </view>
+
+        <view class="seat-share-action">
+          <text class="seat-share-tip">最多上传 3 张，需先定位座位再提交</text>
+          <button
+            class="seat-share-btn"
+            loading="{{seatViewUploading || seatViewSaving}}"
+            bindtap="onSubmitSeatView"
+          >
+            分享此座位视野
+          </button>
+        </view>
+      </view>
+
+      <view class="seat-view-list-panel">
+        <view class="seat-view-list-head">
+          <text class="seat-view-list-title">大家的视野参考（{{seatViewsTotal}}）</text>
+          <text class="seat-view-list-refresh" bindtap="loadSeatViews">刷新</text>
+        </view>
+        <view class="seat-view-stats">
+          <text class="seat-view-stat clear">无遮挡 {{seatViewStats.clear || 0}}</text>
+          <text class="seat-view-stat side">偏侧 {{seatViewStats.side || 0}}</text>
+          <text class="seat-view-stat blocked">被挡 {{seatViewStats.blocked || 0}}</text>
+        </view>
+
+        <view class="seat-view-loading" wx:if="{{seatViewsLoading}}">加载中...</view>
+        <view class="seat-view-empty" wx:elif="{{!seatViews.length}}">还没有人分享，成为第一个吧</view>
+
+        <view wx:else class="seat-view-list">
+          <view class="seat-view-item" wx:for="{{seatViews}}" wx:key="_id" wx:for-index="viewIndex">
+            <view class="seat-view-top">
+              <text class="seat-view-user">{{item.userName || '用户'}}</text>
+              <text class="seat-view-time">{{item.showTime}}</text>
+            </view>
+
+            <view class="seat-view-seat-row">
+              <text class="seat-view-seat">{{item.seatInput}}</text>
+              <text class="seat-view-rating {{item.rating || 'clear'}}">{{item.ratingLabel}}</text>
+            </view>
+
+            <view class="seat-view-seat-row">
+              <text class="seat-view-status">{{item.statusLabel}}</text>
+              <text class="seat-view-locate" data-index="{{viewIndex}}" bindtap="onTapSeatViewLocate">定位该座位</text>
+            </view>
+
+            <text class="seat-view-note" wx:if="{{item.note}}">{{item.note}}</text>
+
+            <view class="seat-view-images" wx:if="{{item.images && item.images.length}}">
+              <image
+                class="seat-view-image"
+                wx:for="{{item.images}}"
+                wx:key="*this"
+                wx:for-index="imgIndex"
+                src="{{item}}"
+                mode="aspectFill"
+                data-view-index="{{viewIndex}}"
+                data-img-index="{{imgIndex}}"
+                bindtap="onPreviewSeatViewImage"
+              />
+            </view>
+
+            <view class="content-op-row" wx:if="{{!item.isMine}}">
+              <text
+                class="content-op-btn report"
+                data-content-type="seatView"
+                data-content-id="{{item._id}}"
+                bindtap="onReportContent"
+              >举报</text>
+              <text
+                class="content-op-btn block"
+                data-openid="{{item.openid}}"
+                bindtap="onBlockUser"
+              >拉黑</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="buddy-section card">
+    <view class="section-title">同好组队</view>
+    <view class="buddy-inner">
+      <view class="buddy-form-panel">
+        <view class="buddy-form-title">找同好一起拍照、拼住、散场活动</view>
+
+        <view class="buddy-form-row">
+          <text class="buddy-form-label">组队类型</text>
+          <picker
+            mode="selector"
+            range="{{buddyTypeOptions}}"
+            range-key="label"
+            value="{{buddyTypeIndex}}"
+            bindchange="onBuddyTypeChange"
+          >
+            <view class="buddy-form-picker">{{buddyTypeOptions[buddyTypeIndex].label}}</view>
+          </picker>
+        </view>
+
+        <view class="buddy-form-row">
+          <text class="buddy-form-label">目标人数</text>
+          <picker
+            mode="selector"
+            range="{{buddyExpectedCountOptions}}"
+            value="{{buddyExpectedCountIndex}}"
+            bindchange="onBuddyExpectedCountChange"
+          >
+            <view class="buddy-form-picker">约 {{buddyExpectedCountOptions[buddyExpectedCountIndex]}} 人</view>
+          </picker>
+        </view>
+
+        <textarea
+          class="buddy-content-input"
+          placeholder="写下你的需求，例如：想找2位同好在入场前一起拍照打卡"
+          value="{{buddyContent}}"
+          maxlength="260"
+          bindinput="onInputBuddyContent"
+        />
+
+        <input
+          class="buddy-contact-input"
+          placeholder="联系方式（建议微信号/备注）"
+          value="{{buddyContact}}"
+          maxlength="80"
+          bindinput="onInputBuddyContact"
+        />
+
+        <button class="buddy-submit-btn" loading="{{buddySaving}}" bindtap="onSubmitBuddyPost">
+          发布同好信息
+        </button>
+      </view>
+
+      <view class="buddy-list-panel">
+        <view class="buddy-list-head">
+          <text class="buddy-list-title">同场同好（{{buddyPostsTotal}}）</text>
+          <text class="buddy-list-refresh" bindtap="loadBuddyPosts">刷新</text>
+        </view>
+
+        <view class="buddy-loading" wx:if="{{buddyLoading}}">加载中...</view>
+        <view class="buddy-empty" wx:elif="{{!buddyPosts.length}}">还没有人发起，快来成为第一个</view>
+
+        <view wx:else class="buddy-list">
+          <view class="buddy-item" wx:for="{{buddyPosts}}" wx:key="_id">
+            <view class="buddy-item-top">
+              <text class="buddy-user">{{item.userName || '用户'}}</text>
+              <text class="buddy-time">{{item.showTime}}</text>
+            </view>
+
+            <view class="buddy-meta-row">
+              <text class="buddy-tag {{item.type}}">{{item.typeLabel}}</text>
+              <text class="buddy-count">目标 {{item.expectedCount || 2}} 人</text>
+            </view>
+
+            <text class="buddy-content">{{item.content}}</text>
+
+            <view class="buddy-contact-row">
+              <text class="buddy-contact">联系：{{item.contact}}</text>
+              <text class="buddy-copy-btn" data-contact="{{item.contact}}" bindtap="onCopyBuddyContact">
+                复制
+              </text>
+            </view>
+
+            <view class="content-op-row" wx:if="{{!item.isMine}}">
+              <text
+                class="content-op-btn report"
+                data-content-type="buddy"
+                data-content-id="{{item._id}}"
+                bindtap="onReportContent"
+              >举报</text>
+              <text
+                class="content-op-btn block"
+                data-openid="{{item.openid}}"
+                bindtap="onBlockUser"
+              >拉黑</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="announcement-section card">
+    <view class="section-title">公告频道</view>
+    <view class="announcement-inner">
+      <view class="announcement-form-panel">
+        <view class="announcement-form-title">官方公告和观演留言都在这里</view>
+        <view class="announcement-toolbar">
+          <picker
+            mode="selector"
+            range="{{announcementSortOptions}}"
+            range-key="label"
+            value="{{announcementSortIndex}}"
+            bindchange="onAnnouncementSortChange"
+          >
+            <view class="announcement-picker">排序：{{announcementSortOptions[announcementSortIndex].label}}</view>
+          </picker>
+
+          <picker
+            wx:if="{{isAdmin}}"
+            mode="selector"
+            range="{{announcementStatusOptions}}"
+            range-key="label"
+            value="{{announcementStatusIndex}}"
+            bindchange="onAnnouncementStatusChange"
+          >
+            <view class="announcement-picker">状态：{{announcementStatusOptions[announcementStatusIndex].label}}</view>
+          </picker>
+        </view>
+
+        <view class="official-switch-row" wx:if="{{isAdmin}}">
+          <text class="official-switch-label">以官方身份发布</text>
+          <switch
+            checked="{{announcementAsOfficial}}"
+            color="#3d8dff"
+            bindchange="onAnnouncementOfficialSwitch"
+          />
+        </view>
+
+        <textarea
+          class="announcement-content-input"
+          placeholder="留言给同场观众，例如：几号门集合、散场地铁拼车、注意事项..."
+          value="{{announcementContent}}"
+          maxlength="280"
+          bindinput="onInputAnnouncementContent"
+        />
+        <button
+          class="announcement-submit-btn"
+          loading="{{announcementSaving}}"
+          bindtap="onSubmitAnnouncementMessage"
+        >
+          发布留言
+        </button>
+      </view>
+
+      <view class="announcement-list-panel">
+        <view class="announcement-list-head">
+          <text class="announcement-list-title">频道消息（{{announcementTotal}}）</text>
+          <text class="announcement-list-refresh" bindtap="loadAnnouncementMessages">刷新</text>
+        </view>
+
+        <view class="announcement-loading" wx:if="{{announcementLoading}}">加载中...</view>
+        <view class="announcement-empty" wx:elif="{{!announcementMessages.length}}">
+          暂无消息，发一条开启互动吧
+        </view>
+
+        <view wx:else class="announcement-list">
+          <view class="announcement-item" wx:for="{{announcementMessages}}" wx:key="_id">
+            <view class="announcement-item-top">
+              <view class="announcement-user-wrap">
+                <text class="announcement-user">{{item.userName || '用户'}}</text>
+                <text class="announcement-official" wx:if="{{item.isOfficial}}">官方</text>
+                <text class="announcement-pinned" wx:if="{{item.isPinned}}">置顶</text>
+                <text class="announcement-status {{item.status || 'approved'}}">{{item.statusLabel}}</text>
+              </view>
+              <text class="announcement-time">{{item.showTime}}</text>
+            </view>
+            <text class="announcement-content">{{item.content}}</text>
+
+            <view class="content-op-row" wx:if="{{!item.isMine}}">
+              <text
+                class="content-op-btn report"
+                data-content-type="announcement"
+                data-content-id="{{item._id}}"
+                bindtap="onReportContent"
+              >举报</text>
+              <text
+                class="content-op-btn block"
+                data-openid="{{item.openid}}"
+                bindtap="onBlockUser"
+              >拉黑</text>
+            </view>
+
+            <view class="admin-op-row" wx:if="{{isAdmin}}">
+              <text
+                class="admin-op-btn"
+                wx:if="{{item.status !== 'approved'}}"
+                data-id="{{item._id}}"
+                data-action="approve"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >通过</text>
+              <text
+                class="admin-op-btn"
+                wx:if="{{item.status !== 'offline'}}"
+                data-id="{{item._id}}"
+                data-action="offline"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >下线</text>
+              <text
+                class="admin-op-btn"
+                wx:if="{{!item.isPinned}}"
+                data-id="{{item._id}}"
+                data-action="pin"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >置顶</text>
+              <text
+                class="admin-op-btn"
+                wx:if="{{item.isPinned}}"
+                data-id="{{item._id}}"
+                data-action="unpin"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >取消置顶</text>
+              <text
+                class="admin-op-btn"
+                data-id="{{item._id}}"
+                data-action="mute_user"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >禁言24h</text>
+              <text
+                class="admin-op-btn danger"
+                data-id="{{item._id}}"
+                data-action="delete"
+                data-openid="{{item.openid}}"
+                bindtap="onAdminModerateAnnouncement"
+              >删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <view class="timeline-section card" wx:if="{{concert.stageHistory && concert.stageHistory.length > 0}}">
-    <view class="section-title">阶段变更</view>
+    <view class="section-title">阶段时间线</view>
     <view class="timeline">
-      <view
-        wx:for="{{concert.stageHistory}}"
-        wx:key="index"
-        class="timeline-item"
-      >
+      <view wx:for="{{concert.stageHistory}}" wx:key="index" class="timeline-item">
         <view class="timeline-dot" style="background-color: {{stageColors[item.stage] || '#999'}}"></view>
         <view class="timeline-content">
           <view class="timeline-stage" style="color: {{stageColors[item.stage] || '#999'}}">{{item.stage}}</view>
@@ -87,7 +511,6 @@
     </view>
   </view>
 
-  <!-- 相关演唱会 -->
   <view class="related-section" wx:if="{{relatedConcerts.length > 0}}">
     <view class="section-title">相关演唱会</view>
     <scroll-view class="related-list" scroll-x enable-flex>
@@ -98,7 +521,7 @@
         data-id="{{item._id}}"
         bindtap="onTapRelated"
       >
-        <image class="related-poster" src="{{item.poster || '/images/default-poster.png'}}" mode="aspectFill" />
+        <image class="related-poster" src="{{item.poster || '/images/default-poster.svg'}}" mode="aspectFill" />
         <view class="related-info">
           <view class="related-title ellipsis">{{item.title}}</view>
           <view class="related-city">{{item.city}}</view>
@@ -107,18 +530,14 @@
     </scroll-view>
   </view>
 
-  <!-- 底部操作栏 -->
   <view class="action-bar safe-area-bottom">
     <button class="btn-subscribe {{concert.subscribed ? 'subscribed' : ''}}" bindtap="onToggleSubscribe">
-      {{concert.subscribed ? '已追更' : '追更订阅'}}
+      {{concert.subscribed ? '已订阅' : '订阅提醒'}}
     </button>
-    <button class="btn-share" open-type="share">
-      分享
-    </button>
+    <button class="btn-share" open-type="share">分享给朋友</button>
   </view>
 </view>
 
-<!-- 加载中 -->
 <view wx:if="{{loading}}" class="loading-state">
   <view class="loading-spinner"></view>
   <text>加载中...</text>

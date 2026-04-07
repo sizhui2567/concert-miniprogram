@@ -1,144 +1,221 @@
 <!-- pages/index/index.wxml -->
-<view class="container">
-  <!-- 搜索栏 - 支持实时搜索 -->
-  <view class="search-header">
-    <view class="search-box">
-      <text class="search-icon">🔍</text>
+<view class="concert-index">
+  <view class="concert-index__header">
+    <view class="concert-index__search-box">
+      <text class="concert-index__search-icon">搜</text>
       <input
-        class="search-input"
+        class="concert-index__search-input"
         type="text"
         placeholder="搜索艺人、演唱会..."
-        placeholder-class="search-placeholder"
+        placeholder-class="concert-index__search-placeholder"
         value="{{searchKeyword}}"
         bindinput="onSearchInput"
         bindconfirm="onSearchConfirm"
         confirm-type="search"
       />
-      <view wx:if="{{searchKeyword}}" class="search-clear" bindtap="onClearSearch">
-        <text>✕</text>
+      <view
+        wx:if="{{searchKeyword}}"
+        class="concert-index__search-clear"
+        bindtap="onClearSearch"
+        hover-class="view-hover"
+      >
+        <text>×</text>
+      </view>
+    </view>
+
+    <view class="concert-index__quick-entry">
+      <view
+        class="concert-index__quick-item concert-index__quick-item--hot"
+        bindtap="onTapTomorrowFast"
+        hover-class="view-hover"
+      >
+        <text class="concert-index__quick-icon">明</text>
+        <text class="concert-index__quick-text">明日抢票</text>
+      </view>
+      <view
+        class="concert-index__quick-item"
+        bindtap="onTapSubscribeFast"
+        hover-class="view-hover"
+      >
+        <text class="concert-index__quick-icon">订</text>
+        <text class="concert-index__quick-text">我的订阅</text>
+      </view>
+      <view
+        class="concert-index__quick-item concert-index__quick-item--ghost"
+        bindtap="onTapHeatFast"
+        hover-class="view-hover"
+      >
+        <text class="concert-index__quick-icon">热</text>
+        <text class="concert-index__quick-text">热度榜</text>
       </view>
     </view>
   </view>
 
-  <!-- 开发调试面板（仅开发版显示） -->
   <view wx:if="{{isDev}}" class="dev-panel">
-    <view class="dev-header">
-      <text class="dev-title">开发调试</text>
+    <view class="dev-panel__header">
+      <text class="dev-panel__title">开发调试</text>
       <button
-        class="dev-btn"
+        class="dev-panel__btn"
         size="mini"
         loading="{{initLoading}}"
         disabled="{{initLoading}}"
         bindtap="onInitDatabase"
+        hover-class="view-hover"
       >
         初始化数据
       </button>
     </view>
-    <view wx:if="{{initResult}}" class="dev-result">
+    <view wx:if="{{initResult}}" class="dev-panel__result">
       <text selectable>{{initResult}}</text>
     </view>
   </view>
 
- 
+  <scroll-view class="city-filter" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="city-filter__track">
+      <view
+        wx:for="{{hotCities}}"
+        wx:key="*this"
+        class="city-filter__item {{selectedCity === item ? 'city-filter__item--active' : ''}}"
+        data-city="{{item}}"
+        bindtap="onSelectCity"
+        hover-class="view-hover"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
 
-  <!-- 搜索结果提示 -->
-  <view wx:if="{{searchKeyword}}" class="search-tips">
-    搜索 "{{searchKeyword}}" 的结果：{{concerts.length}} 场演唱会
+  <view wx:if="{{searchKeyword}}" class="concert-index__search-tips">
+    搜索“{{searchKeyword}}”共找到 {{concerts.length}} 场演唱会
   </view>
 
-  <!-- 演唱会列表 - 横向浮动卡片 -->
-  <view class="concert-list">
-    <block wx:if="{{concerts.length > 0}}">
+  <view class="concert-index__list">
+    <view class="concert-index__section-header">
+      <text class="concert-index__section-title" wx:if="{{selectedCity === '全部'}}">热门演出</text>
+      <text class="concert-index__section-title" wx:else>{{selectedCity}}演出</text>
+      <text class="concert-index__section-count font-din" wx:if="{{concerts.length > 0}}">{{concerts.length}} 场</text>
+    </view>
+
+    <view wx:if="{{isShowLoading && concerts.length === 0}}" class="state-skeleton">
+      <view class="state-skeleton__card" wx:for="{{[1,2,3]}}" wx:key="*this">
+        <view class="state-skeleton__poster"></view>
+        <view class="state-skeleton__content">
+          <view class="state-skeleton__line state-skeleton__line--w90"></view>
+          <view class="state-skeleton__line state-skeleton__line--w45"></view>
+          <view class="state-skeleton__line state-skeleton__line--w75"></view>
+          <view class="state-skeleton__line state-skeleton__line--w55"></view>
+          <view class="state-skeleton__row">
+            <view class="state-skeleton__chip"></view>
+            <view class="state-skeleton__chip"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <block wx:elif="{{concerts.length > 0}}">
       <view
         wx:for="{{concerts}}"
         wx:key="_id"
-        class="concert-card-horizontal"
+        class="ticket-card"
         data-id="{{item._id}}"
         bindtap="onTapConcert"
+        hover-class="view-hover"
       >
-        <!-- 左侧海报图 -->
-        <view class="card-poster">
+        <view class="ticket-card__poster">
           <image
             wx:if="{{item.poster}}"
             src="{{item.poster}}"
             mode="aspectFill"
             lazy-load
           />
-          <view wx:else class="poster-placeholder">
-            <text>🎤</text>
+          <view wx:else class="ticket-card__poster-placeholder">
+            <text>演</text>
           </view>
-          <!-- 阶段标签 -->
-          <view class="stage-badge stage-{{item.stageClass}}">{{item.stage}}</view>
+          <view class="ticket-card__stage-badge ticket-card__stage-badge--{{item.stageClass}}">{{item.stage}}</view>
         </view>
 
-        <!-- 右侧信息 -->
-        <view class="card-info">
-          <!-- 标题 -->
-          <view class="card-title">{{item.title}}</view>
+        <view class="ticket-card__info">
+          <view class="ticket-card__title">{{item.title}}</view>
 
-          <!-- 艺人 -->
-          <view class="card-artist">
-            <text class="artist-name">{{item.artist}}</text>
+          <view class="ticket-card__artist-wrap">
+            <text class="ticket-card__artist">{{item.artist}}</text>
           </view>
 
-          <!-- 地点和日期 -->
-          <view class="card-meta">
-            <view class="meta-item">
-              <text class="meta-icon">📍</text>
-              <text>{{item.city}} · {{item.venue}}</text>
+          <view class="ticket-card__meta">
+            <view class="ticket-card__meta-row">
+              <text class="ticket-card__meta-label">地点</text>
+              <text class="ticket-card__meta-value">{{item.city}} · {{item.venue}}</text>
             </view>
-            <view class="meta-item">
-              <text class="meta-icon">📅</text>
-              <text>{{item.dates[0]}}{{item.dates.length > 1 ? ' 起' : ''}}</text>
+            <view class="ticket-card__meta-row">
+              <text class="ticket-card__meta-label">日期</text>
+              <text class="ticket-card__meta-value font-din">{{item.dates[0]}}{{item.dates.length > 1 ? ' +' : ''}}</text>
             </view>
           </view>
 
-          <!-- 预售时间 -->
-          <view class="card-presale" wx:if="{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}">
-            <text class="presale-label">预售时间：</text>
-            <text class="presale-time">{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}</text>
+          <view class="ticket-card__presale" wx:if="{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}">
+            <text class="ticket-card__presale-label">预售时间</text>
+            <text class="ticket-card__presale-time font-din">{{item.platforms.damai.openTime || item.platforms.maoyan.openTime}}</text>
           </view>
 
-          <!-- 平台和价格 -->
-          <view class="card-bottom">
-            <view class="platform-list">
-              <block wx:if="{{item.availablePlatforms.length > 0}}">
-                <text
-                  wx:for="{{item.availablePlatforms}}"
-                  wx:key="*this"
-                  class="platform-tag"
+          <view class="ticket-card__bottom">
+            <view class="ticket-card__platforms">
+                <block wx:if="{{item.availablePlatforms.length > 0}}">
+                  <view
+                    wx:for="{{item.availablePlatforms}}"
+                    wx:key="*this"
+                    class="ticket-card__platform-tag"
+                  >
+                    {{item}}
+                  </view>
+                </block>
+                <view wx:else class="ticket-card__platform-empty">暂无平台</view>
+            </view>
+
+            <view class="ticket-card__cta-row">
+              <view class="ticket-card__price" wx:if="{{item.priceRange}}">
+                <text class="ticket-card__price-symbol font-din">¥</text>
+                <text class="ticket-card__price-value font-din">{{item.priceRange}}</text>
+              </view>
+              <view class="ticket-card__actions">
+                <view
+                  class="ticket-card__seatmap-btn"
+                  catchtap="onTapSeatMap"
+                  data-id="{{item._id}}"
+                  hover-class="view-hover"
                 >
-                  {{item}}
-                </text>
-              </block>
-              <text wx:else class="platform-empty">暂无平台</text>
-            </view>
-            <view class="card-price" wx:if="{{item.priceRange}}">
-              <text class="price-symbol">¥</text>
-              <text class="price-value">{{item.priceRange}}</text>
+                  座位图
+                </view>
+                <view
+                  class="ticket-card__subscribe {{item.subscribed ? 'ticket-card__subscribe--on' : ''}}"
+                  catchtap="onSubscribe"
+                  data-concert="{{item}}"
+                  hover-class="view-hover"
+                >
+                  {{item.subscribed ? '已订阅' : '订阅提醒'}}
+                </view>
+              </view>
             </view>
           </view>
-        </view>
-
-        <!-- 订阅按钮 -->
-        <view
-          class="subscribe-btn {{item.subscribed ? 'subscribed' : ''}}"
-          catchtap="onSubscribe"
-          data-concert="{{item}}"
-        >
-          {{item.subscribed ? '已订阅' : '订阅'}}
         </view>
       </view>
     </block>
 
-    <!-- 空状态 -->
-    <view wx:elif="{{!loading}}" class="empty-state">
-      <view class="empty-icon">📭</view>
-      <text wx:if="{{searchKeyword}}">未找到 "{{searchKeyword}}" 相关演唱会</text>
-      <text wx:else>暂无演唱会信息</text>
+    <view wx:elif="{{loadError}}" class="state-error">
+      <view class="state-error__icon">!</view>
+      <text class="state-error__title">加载失败</text>
+      <text class="state-error__desc">{{loadError}}</text>
+      <view class="state-error__btn" bindtap="onRetryLoad" hover-class="view-hover">重新加载</view>
     </view>
 
-    <!-- 加载更多 -->
+    <view wx:else class="state-empty">
+      <view class="state-empty__icon-wrap">
+        <text class="state-empty__icon">票</text>
+      </view>
+      <text class="state-empty__title" wx:if="{{searchKeyword}}">没有找到“{{searchKeyword}}”相关演唱会</text>
+      <text class="state-empty__title" wx:else>当前城市还没有演出</text>
+      <text class="state-empty__desc">切换城市或稍后再来看，可能会有新场次上架</text>
+    </view>
+
     <view wx:if="{{concerts.length > 0}}" class="load-more">
       <text wx:if="{{loading}}">加载中...</text>
       <text wx:elif="{{!hasMore}}">没有更多了</text>

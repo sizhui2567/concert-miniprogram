@@ -1,14 +1,14 @@
 /* pages/search/search.wxss */
 .container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(180deg, var(--ng-bg-page) 0%, var(--ng-bg-surface) 52%, var(--c-10131a) 100%);
 }
 
-/* 搜索头部 */
 .search-header {
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background: var(--ng-bg-surface);
+  border-bottom: 1rpx solid var(--ng-border);
   padding-right: 20rpx;
 }
 
@@ -31,20 +31,19 @@
 
 .filter-btn text {
   font-size: 20rpx;
-  color: #666;
+  color: var(--ng-text-secondary);
 }
 
-/* 筛选面板 */
 .filter-panel {
   max-height: 0;
   overflow: hidden;
-  background-color: #fff;
+  background: var(--ng-bg-surface);
   transition: max-height 0.3s ease;
 }
 
 .filter-panel.show {
   max-height: 600rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid var(--ng-border);
 }
 
 .filter-section {
@@ -53,7 +52,7 @@
 
 .filter-title {
   font-size: 26rpx;
-  color: #999;
+  color: var(--ng-text-secondary);
   margin-bottom: 16rpx;
 }
 
@@ -66,19 +65,20 @@
 .filter-option {
   padding: 12rpx 24rpx;
   font-size: 24rpx;
-  color: #666;
-  background-color: #f5f5f5;
+  color: var(--c-d7d0c3);
+  background: var(--c-1f2733);
+  border: 1rpx solid var(--ng-border);
   border-radius: 24rpx;
 }
 
 .filter-option.active {
-  color: #fff;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  color: var(--c-10131a);
+  background: linear-gradient(135deg, var(--ng-accent) 0%, var(--ng-accent-strong) 100%);
 }
 
 .filter-actions {
   padding: 20rpx 30rpx;
-  border-top: 1rpx solid #f0f0f0;
+  border-top: 1rpx solid var(--ng-border);
 }
 
 .btn-reset {
@@ -86,17 +86,24 @@
   height: 72rpx;
   line-height: 72rpx;
   font-size: 28rpx;
-  color: #666;
-  background-color: #f5f5f5;
+  color: var(--c-d7d0c3);
+  background: var(--c-1f2733);
+  border: 1rpx solid var(--ng-border);
   border-radius: 36rpx;
+  margin: 0;
+}
+
+.btn-reset::after {
   border: none;
 }
 
-/* 搜索历史 */
-.search-history {
+.search-history,
+.hot-search {
   padding: 30rpx;
-  background-color: #fff;
+  background: var(--ng-bg-surface);
   margin-bottom: 20rpx;
+  border-top: 1rpx solid var(--ng-border);
+  border-bottom: 1rpx solid var(--ng-border);
 }
 
 .history-header {
@@ -106,59 +113,36 @@
   margin-bottom: 20rpx;
 }
 
-.history-title {
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.history-clear {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.history-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
-
-.history-item {
-  padding: 12rpx 24rpx;
-  font-size: 24rpx;
-  color: #666;
-  background-color: #f5f5f5;
-  border-radius: 24rpx;
-}
-
-/* 热门搜索 */
-.hot-search {
-  padding: 30rpx;
-  background-color: #fff;
-}
-
+.history-title,
 .hot-title {
   font-size: 28rpx;
-  color: #333;
+  color: var(--ng-text-primary);
   font-weight: 500;
   margin-bottom: 20rpx;
 }
 
+.history-clear {
+  font-size: 24rpx;
+  color: var(--ng-text-secondary);
+}
+
+.history-list,
 .hot-list {
   display: flex;
   flex-wrap: wrap;
   gap: 16rpx;
 }
 
+.history-item,
 .hot-item {
   padding: 12rpx 24rpx;
   font-size: 24rpx;
-  color: #666;
-  background-color: #f5f5f5;
+  color: var(--c-d7d0c3);
+  background: var(--c-1f2733);
+  border: 1rpx solid var(--ng-border);
   border-radius: 24rpx;
 }
 
-/* 搜索结果 */
 .search-results {
   padding-top: 10rpx;
 }
@@ -166,14 +150,13 @@
 .results-count {
   padding: 20rpx 30rpx;
   font-size: 24rpx;
-  color: #999;
+  color: var(--ng-text-secondary);
 }
 
 .concert-list {
   padding-bottom: 20rpx;
 }
 
-/* 空状态 */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -191,16 +174,15 @@
 
 .empty-state text {
   font-size: 28rpx;
-  color: #999;
+  color: var(--ng-text-secondary);
   margin-bottom: 10rpx;
 }
 
 .empty-tip {
   font-size: 24rpx;
-  color: #ccc;
+  color: var(--ng-text-muted);
 }
 
-/* 加载更多 */
 .load-more {
   display: flex;
   align-items: center;
@@ -210,5 +192,5 @@
 
 .load-more text {
   font-size: 26rpx;
-  color: #999;
+  color: var(--ng-text-secondary);
 }

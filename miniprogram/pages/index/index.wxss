@@ -1,378 +1,647 @@
 /* pages/index/index.wxss */
-.container {
-  min-height: 100vh;
-  background-color: #f5f5f5;
+.font-din {
+  font-family: var(--ff-number);
 }
 
-/* 搜索头部 */
-.search-header {
+.concert-index {
+  min-height: 100vh;
+  background: var(--color-bg-global, var(--color-bg-page));
+}
+
+.concert-index__header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-  padding: 20rpx 24rpx 24rpx;
+  padding: 20rpx 24rpx 22rpx;
+  background:
+    radial-gradient(circle at 10% -30%, rgba(255, 90, 54, 0.2) 0, rgba(255, 90, 54, 0) 56%),
+    radial-gradient(circle at 95% 5%, rgba(0, 194, 168, 0.16) 0, rgba(0, 194, 168, 0) 48%),
+    linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg-global, var(--color-bg-page)) 100%);
+  border-bottom: 1rpx solid rgba(23, 26, 31, 0.06);
 }
 
-.search-box {
+.concert-index__search-box {
   display: flex;
   align-items: center;
   height: 72rpx;
-  padding: 0 24rpx;
-  background-color: #fff;
-  border-radius: 36rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  padding: 0 20rpx;
+  border-radius: 32rpx;
+  border: 1rpx solid rgba(23, 26, 31, 0.06);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-light, var(--shadow-card));
 }
 
-.search-icon {
-  font-size: 32rpx;
-  margin-right: 16rpx;
-  opacity: 0.5;
+.concert-index__search-icon {
+  margin-right: 12rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text-disabled, var(--color-text-muted));
 }
 
-.search-input {
+.concert-index__search-input {
   flex: 1;
   height: 100%;
   font-size: 28rpx;
-  color: #333;
+  color: var(--color-text-main, var(--color-text-strong));
 }
 
-.search-placeholder {
-  color: #999;
+.concert-index__search-placeholder {
+  color: var(--color-text-disabled, var(--color-text-muted));
 }
 
-.search-clear {
+.concert-index__search-clear {
   width: 40rpx;
   height: 40rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  font-size: 24rpx;
+  color: var(--color-text-disabled, var(--color-text-muted));
+  background: rgba(23, 26, 31, 0.05);
 }
 
-.search-clear image {
-  width: 32rpx;
-  height: 32rpx;
-  opacity: 0.4;
+.concert-index__quick-entry {
+  display: flex;
+  margin-top: 14rpx;
 }
 
-/* 开发调试面板 */
+.concert-index__quick-item {
+  flex: 1;
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12rpx;
+  border-radius: var(--radius-btn);
+  border: 1rpx solid rgba(255, 90, 54, 0.2);
+  background: rgba(255, 90, 54, 0.12);
+  color: var(--color-primary);
+}
+
+.concert-index__quick-item:last-child {
+  margin-right: 0;
+}
+
+.concert-index__quick-item--hot {
+  color: var(--color-surface);
+  border: none;
+  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(255, 90, 54, 0.8) 100%);
+  box-shadow: 0 8rpx 18rpx rgba(255, 90, 54, 0.26);
+}
+
+.concert-index__quick-item--ghost {
+  color: var(--color-accent);
+  border-color: rgba(0, 194, 168, 0.25);
+  background: rgba(0, 194, 168, 0.12);
+}
+
+.concert-index__quick-icon {
+  font-size: 22rpx;
+  line-height: 1;
+  margin-right: 8rpx;
+}
+
+.concert-index__quick-text {
+  font-size: 24rpx;
+  line-height: 34rpx;
+  font-weight: 600;
+}
+
 .dev-panel {
-  margin: 16rpx;
+  margin: 16rpx 24rpx 8rpx;
   padding: 16rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
-  border: 1rpx dashed #ffd6d6;
+  border-radius: var(--radius-btn);
+  border: 1rpx dashed rgba(255, 90, 54, 0.28);
+  background: var(--color-surface);
 }
 
-.dev-header {
+.dev-panel__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12rpx;
 }
 
-.dev-title {
+.dev-panel__title {
   font-size: 24rpx;
-  color: #ff6b6b;
   font-weight: 600;
+  color: var(--color-primary);
 }
 
-.dev-btn {
-  padding: 0 20rpx;
-  font-size: 24rpx;
-  line-height: 56rpx;
+.dev-panel__btn {
+  margin: 0;
   height: 56rpx;
+  line-height: 56rpx;
+  padding: 0 22rpx;
   border-radius: 28rpx;
-  color: #ff6b6b;
-  background: #fff5f5;
-  border: 1rpx solid #ffd1d1;
+  font-size: 23rpx;
+  color: var(--color-surface);
+  background: var(--color-primary);
 }
 
-.dev-result {
-  background-color: #fff9f9;
+.dev-panel__btn::after {
+  border: none;
+}
+
+.dev-panel__result {
+  margin-top: 12rpx;
   padding: 12rpx;
-  border-radius: 8rpx;
+  border-radius: 10rpx;
   font-size: 22rpx;
-  color: #666;
+  line-height: 1.5;
+  color: var(--color-text-sub, var(--color-text-body));
+  background: rgba(23, 26, 31, 0.03);
   white-space: pre-wrap;
 }
 
-/* 城市筛选 */
 .city-filter {
-  display: flex;
+  padding: 14rpx 0 10rpx;
   white-space: nowrap;
-  padding: 20rpx 10rpx;
-  background-color: #fff;
-  border-bottom: 1rpx solid #f0f0f0;
 }
 
-.city-item {
+.city-filter__track {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12rpx 28rpx;
-  margin: 0 10rpx;
-  font-size: 26rpx;
-  color: #666;
-  background-color: #f5f5f5;
-  border-radius: 30rpx;
+  padding: 0 24rpx;
+}
+
+.city-filter__item {
   flex-shrink: 0;
-}
-
-.city-item.active {
-  color: #fff;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-}
-
-/* 搜索提示 */
-.search-tips {
-  padding: 16rpx 24rpx;
+  height: 54rpx;
+  line-height: 54rpx;
+  margin-right: 12rpx;
+  padding: 0 24rpx;
+  border-radius: 27rpx;
   font-size: 24rpx;
-  color: #999;
-  background-color: #fff;
-  border-bottom: 1rpx solid #f0f0f0;
+  color: var(--color-text-sub, var(--color-text-body));
+  border: 1rpx solid var(--color-border);
+  background: var(--color-surface);
 }
 
-/* 演唱会列表 */
-.concert-list {
-  padding: 16rpx;
+.city-filter__item:last-child {
+  margin-right: 0;
 }
 
-/* 横向浮动卡片样式 */
-.concert-card-horizontal {
+.city-filter__item--active {
+  color: var(--color-surface);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  box-shadow: 0 8rpx 16rpx rgba(255, 90, 54, 0.24);
+}
+
+.concert-index__search-tips {
+  margin: 0 24rpx;
+  padding: 10rpx 14rpx;
+  border-radius: 14rpx;
+  border: 1rpx dashed var(--color-border);
+  font-size: 22rpx;
+  color: var(--color-text-disabled, var(--color-text-muted));
+  background: var(--color-surface);
+}
+
+.concert-index__list {
+  padding: 10rpx 24rpx 24rpx;
+}
+
+.concert-index__section-header {
   display: flex;
-  position: relative;
-  background-color: #fff;
-  border-radius: 16rpx;
-  margin-bottom: 20rpx;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8rpx 2rpx 14rpx;
+}
+
+.concert-index__section-title {
+  font-size: 32rpx;
+  line-height: 48rpx;
+  font-weight: 600;
+  color: var(--color-text-main, var(--color-text-strong));
+}
+
+.concert-index__section-count {
+  font-size: 22rpx;
+  line-height: 32rpx;
+  color: var(--color-text-sub, var(--color-text-body));
+}
+
+.state-skeleton {
+  padding-bottom: 4rpx;
+}
+
+.state-skeleton__card {
+  display: flex;
   overflow: hidden;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  margin-bottom: 22rpx;
+  border-radius: var(--radius-card);
+  border: 1rpx solid rgba(23, 26, 31, 0.06);
+  background: var(--color-surface);
 }
 
-.concert-card-horizontal:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
+.state-skeleton__poster {
+  width: 220rpx;
+  height: 294rpx;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(23, 26, 31, 0.06) 25%,
+    rgba(23, 26, 31, 0.12) 37%,
+    rgba(23, 26, 31, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  animation: state-shimmer 1.2s linear infinite;
 }
 
-/* 左侧海报 */
-.card-poster {
+.state-skeleton__content {
+  flex: 1;
+  padding: 18rpx 20rpx 18rpx 28rpx;
+}
+
+.state-skeleton__line {
+  height: 22rpx;
+  margin-bottom: 14rpx;
+  border-radius: 10rpx;
+  background: linear-gradient(
+    90deg,
+    rgba(23, 26, 31, 0.06) 25%,
+    rgba(23, 26, 31, 0.12) 37%,
+    rgba(23, 26, 31, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  animation: state-shimmer 1.2s linear infinite;
+}
+
+.state-skeleton__line--w90 { width: 90%; }
+.state-skeleton__line--w75 { width: 75%; }
+.state-skeleton__line--w55 { width: 55%; }
+.state-skeleton__line--w45 { width: 45%; }
+
+.state-skeleton__row {
+  display: flex;
+  margin-top: 8rpx;
+}
+
+.state-skeleton__chip {
+  width: 86rpx;
+  height: 34rpx;
+  margin-right: 10rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(
+    90deg,
+    rgba(23, 26, 31, 0.06) 25%,
+    rgba(23, 26, 31, 0.12) 37%,
+    rgba(23, 26, 31, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  animation: state-shimmer 1.2s linear infinite;
+}
+
+.ticket-card {
+  display: flex;
+  margin-bottom: 22rpx;
+  border-radius: var(--radius-card);
+  border: 1rpx solid rgba(23, 26, 31, 0.06);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-light, var(--shadow-card));
+  overflow: hidden;
+}
+
+.ticket-card__poster {
   position: relative;
   width: 220rpx;
-  height: 280rpx;
+  height: 294rpx;
   flex-shrink: 0;
 }
 
-.card-poster image {
+.ticket-card__poster image {
   width: 100%;
   height: 100%;
 }
 
-/* 海报占位符 */
-.poster-placeholder {
+.ticket-card__poster-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  color: var(--color-text-main, var(--color-text-strong));
+  background: rgba(23, 26, 31, 0.08);
 }
 
-.poster-placeholder text {
-  font-size: 80rpx;
+.ticket-card__poster-placeholder text {
+  font-size: 66rpx;
+  font-weight: 600;
 }
 
-/* 阶段标签 */
-.stage-badge {
+.ticket-card__stage-badge {
   position: absolute;
-  top: 12rpx;
-  left: 12rpx;
+  left: 14rpx;
+  top: 14rpx;
+  z-index: 2;
   padding: 6rpx 14rpx;
+  border-radius: 8rpx;
   font-size: 20rpx;
-  font-weight: 500;
-  color: #fff;
-  border-radius: 6rpx;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--color-surface);
+  background: var(--color-text-disabled, var(--color-text-muted));
 }
 
-.stage-badge.stage-rumor { background-color: #f6f6f6; }
-.stage-badge.stage-listed { background-color: #3498db; }
-.stage-badge.stage-first { background-color: #e67e22; }
-.stage-badge.stage-second { background-color: #e74c3c; }
-.stage-badge.stage-third { background-color: #9b59b6; }
-.stage-badge.stage-ended { background-color: #7f8c8d; }
-.stage-badge.stage-unknown { background-color: #999; }
+.ticket-card__stage-badge--first,
+.ticket-card__stage-badge--second {
+  background: var(--color-primary);
+}
 
-/* 右侧信息 */
-.card-info {
+.ticket-card__stage-badge--third {
+  background: var(--color-accent);
+}
+
+.ticket-card__stage-badge--listed {
+  color: var(--color-warning);
+  border: 1rpx solid var(--color-warning);
+  background: rgba(255, 176, 32, 0.1);
+}
+
+.ticket-card__stage-badge--ended,
+.ticket-card__stage-badge--rumor,
+.ticket-card__stage-badge--unknown {
+  color: var(--color-text-disabled, var(--color-text-muted));
+  background: rgba(23, 26, 31, 0.12);
+}
+
+.ticket-card__info {
+  position: relative;
   flex: 1;
-  padding: 20rpx;
+  min-width: 0;
+  padding: 18rpx 20rpx 16rpx 28rpx;
   display: flex;
   flex-direction: column;
-  min-width: 0;
 }
 
-.card-title {
-  font-size: 30rpx;
+.ticket-card__info::before {
+  content: '';
+  position: absolute;
+  left: 12rpx;
+  top: 18rpx;
+  bottom: 18rpx;
+  border-left: 1rpx dashed rgba(23, 26, 31, 0.14);
+}
+
+.ticket-card__title {
+  font-size: 36rpx;
+  line-height: 50rpx;
   font-weight: 600;
-  color: #333;
-  line-height: 1.4;
+  color: var(--color-text-main, var(--color-text-strong));
+  margin-bottom: 8rpx;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  margin-bottom: 8rpx;
 }
 
-.card-artist {
-  margin-bottom: 12rpx;
+.ticket-card__artist-wrap {
+  margin-bottom: 10rpx;
 }
 
-.artist-name {
-  font-size: 26rpx;
-  color: #FF6B6B;
-  font-weight: 500;
+.ticket-card__artist {
+  font-size: 28rpx;
+  line-height: 40rpx;
+  color: var(--color-text-sub, var(--color-text-body));
 }
 
-.card-meta {
-  margin-bottom: 12rpx;
+.ticket-card__meta {
+  margin-bottom: 10rpx;
 }
 
-.meta-item {
+.ticket-card__meta-row {
   display: flex;
   align-items: center;
-  font-size: 22rpx;
-  color: #888;
   margin-bottom: 6rpx;
+}
+
+.ticket-card__meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.ticket-card__meta-label {
+  flex-shrink: 0;
+  margin-right: 8rpx;
+  font-size: 22rpx;
+  line-height: 32rpx;
+  color: var(--color-text-disabled, var(--color-text-muted));
+}
+
+.ticket-card__meta-value {
+  min-width: 0;
+  font-size: 24rpx;
+  line-height: 34rpx;
+  color: var(--color-text-sub, var(--color-text-body));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.meta-icon {
-  margin-right: 6rpx;
-  font-size: 20rpx;
-}
-
-/* 预售时间 */
-.card-presale {
-  display: flex;
+.ticket-card__presale {
+  display: inline-flex;
   align-items: center;
-  padding: 8rpx 12rpx;
-  background-color: #FFF5F5;
-  border-radius: 6rpx;
+  align-self: flex-start;
   margin-bottom: 12rpx;
+  padding: 6rpx 10rpx;
+  border-radius: 10rpx;
+  background: rgba(255, 176, 32, 0.14);
 }
 
-.presale-label {
+.ticket-card__presale-label {
+  margin-right: 8rpx;
   font-size: 20rpx;
-  color: #999;
+  line-height: 30rpx;
+  color: rgba(159, 107, 0, 0.9);
 }
 
-.presale-time {
+.ticket-card__presale-time {
   font-size: 22rpx;
-  color: #FF6B6B;
-  font-weight: 500;
+  line-height: 30rpx;
+  color: var(--color-warning);
+  font-weight: 700;
 }
 
-/* 底部：平台和价格 */
-.card-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.ticket-card__bottom {
   margin-top: auto;
+  padding-top: 8rpx;
+  border-top: 1rpx dashed rgba(23, 26, 31, 0.12);
 }
 
-.platform-list {
+.ticket-card__platforms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 10rpx;
+  min-height: 34rpx;
+}
+
+.ticket-card__platform-tag {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8rpx;
-  max-width: 70%;
-}
-
-.platform-tag {
-  padding: 4rpx 12rpx;
-  border-radius: 999rpx;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  height: 34rpx;
+  margin-right: 8rpx;
+  margin-bottom: 6rpx;
+  padding: 0 12rpx;
+  border-radius: 6rpx;
   font-size: 20rpx;
-  color: #ff6b6b;
-  background-color: #fff5f5;
-  border: 1rpx solid #ffd1d1;
+  line-height: 34rpx;
+  color: var(--color-primary);
+  background: rgba(255, 90, 54, 0.12);
 }
 
-.platform-empty {
-  font-size: 22rpx;
-  color: #bbb;
-}
-
-.card-price {
+.ticket-card__platform-empty {
   display: flex;
-  align-items: baseline;
-}
-
-.price-symbol {
+  align-items: center;
   font-size: 20rpx;
-  color: #FF6B6B;
+  line-height: 30rpx;
+  color: var(--color-text-disabled, var(--color-text-muted));
 }
 
-.price-value {
-  font-size: 26rpx;
+.ticket-card__cta-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.ticket-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.ticket-card__seatmap-btn {
+  height: 52rpx;
+  line-height: 52rpx;
+  padding: 0 18rpx;
+  text-align: center;
+  border-radius: var(--radius-btn);
+  font-size: 24rpx;
   font-weight: 600;
-  color: #FF6B6B;
+  color: var(--color-primary);
+  background: rgba(255, 90, 54, 0.12);
 }
 
-/* 订阅按钮 */
-.subscribe-btn {
-  position: absolute;
-  right: 20rpx;
-  bottom: 20rpx;
-  padding: 10rpx 20rpx;
+.ticket-card__price {
+  display: flex;
+  align-items: flex-end;
+  color: var(--color-primary);
+}
+
+.ticket-card__price-symbol {
   font-size: 22rpx;
-  color: #fff;
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-  border-radius: 20rpx;
-  z-index: 10;
+  line-height: 30rpx;
 }
 
-.subscribe-btn.subscribed {
-  background: #e0e0e0;
-  color: #999;
+.ticket-card__price-value {
+  font-size: 34rpx;
+  line-height: 36rpx;
+  font-weight: 700;
 }
 
-/* 空状态 */
-.empty-state {
+.ticket-card__subscribe {
+  min-width: 144rpx;
+  height: 52rpx;
+  line-height: 52rpx;
+  padding: 0 20rpx;
+  text-align: center;
+  border-radius: var(--radius-btn);
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-surface);
+  background: var(--color-primary);
+}
+
+.ticket-card__subscribe--on {
+  background: var(--color-accent);
+}
+
+.state-empty,
+.state-error {
+  min-height: 380rpx;
+  padding: 80rpx 32rpx 70rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 150rpx 0;
+  text-align: center;
 }
 
-.empty-icon {
-  font-size: 120rpx;
-  margin-bottom: 30rpx;
-  opacity: 0.6;
-}
-
-.empty-state image {
-  width: 240rpx;
-  height: 240rpx;
-  margin-bottom: 30rpx;
-  opacity: 0.6;
-}
-
-.empty-state text {
-  font-size: 28rpx;
-  color: #999;
-}
-
-/* 加载更多 */
-.load-more {
+.state-empty__icon-wrap,
+.state-error__icon {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30rpx 0 50rpx;
+  margin-bottom: 24rpx;
+}
+
+.state-empty__icon-wrap {
+  background: rgba(255, 90, 54, 0.1);
+}
+
+.state-empty__icon {
+  font-size: 56rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.state-empty__title,
+.state-error__title {
+  font-size: 32rpx;
+  line-height: 46rpx;
+  font-weight: 600;
+  color: var(--color-text-main, var(--color-text-strong));
+}
+
+.state-empty__desc,
+.state-error__desc {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  line-height: 40rpx;
+  color: var(--color-text-sub, var(--color-text-body));
+}
+
+.state-error__icon {
+  background: rgba(255, 176, 32, 0.2);
+  color: var(--color-warning);
+  font-size: 56rpx;
+  font-weight: 700;
+}
+
+.state-error__btn {
+  margin-top: 24rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  padding: 0 24rpx;
+  border-radius: var(--radius-btn);
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--color-surface);
+  background: var(--color-primary);
+}
+
+.load-more {
+  padding: 20rpx 0 46rpx;
+  text-align: center;
 }
 
 .load-more text {
-  font-size: 26rpx;
-  color: #999;
+  font-size: 24rpx;
+  color: var(--color-text-disabled, var(--color-text-muted));
+}
+
+@keyframes state-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }

@@ -3,6 +3,7 @@
   "usingComponents": {
     "stage-tag": "/components/stage-tag/stage-tag",
     "platform-icons": "/components/platform-icons/platform-icons",
-    "concert-card": "/components/concert-card/concert-card"
+    "concert-card": "/components/concert-card/concert-card",
+    "seat-map": "/components/seat-map/seat-map"
   }
 }

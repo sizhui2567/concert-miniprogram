@@ -30,6 +30,8 @@ Page({
     page: 1,
     hasMore: true,
     loading: false,
+    isShowLoading: false,
+    loadError: '',
     refreshing: false,
     isDev: false,
     initLoading: false,
@@ -49,6 +51,34 @@ Page({
     // 刷新订阅状态
     if (this.data.concerts.length > 0) {
       this.refreshSubscriptionStatus();
+    }
+  },
+
+  onUnload() {
+    this.clearLoadingTimer();
+  },
+
+  // 防闪烁：请求超过300ms再显示骨架
+  startLoadingGuard() {
+    this.clearLoadingTimer();
+    this.loadingTimer = setTimeout(() => {
+      if (this.data.loading) {
+        this.setData({ isShowLoading: true });
+      }
+    }, 300);
+  },
+
+  clearLoadingGuard() {
+    this.clearLoadingTimer();
+    if (this.data.isShowLoading) {
+      this.setData({ isShowLoading: false });
+    }
+  },
+
+  clearLoadingTimer() {
+    if (this.loadingTimer) {
+      clearTimeout(this.loadingTimer);
+      this.loadingTimer = null;
     }
   },
 
@@ -138,7 +168,11 @@ Page({
   // 加载演唱会列表
   async loadConcerts() {
     const { selectedCity, searchKeyword } = this.data;
-    this.setData({ loading: true });
+    this.setData({
+      loading: true,
+      loadError: ''
+    });
+    this.startLoadingGuard();
 
     try {
       const city = selectedCity === '全部' ? '' : selectedCity;
@@ -163,16 +197,20 @@ Page({
       console.error('加载演唱会失败:', err);
       showToast('加载失败，请重试');
       // 确保错误时也设置空数组，避免页面空白
-      this.setData({ concerts: [] });
+      this.setData({
+        concerts: [],
+        loadError: (err && err.message) ? err.message : '网络异常，请稍后重试'
+      });
     } finally {
       this.setData({ loading: false });
+      this.clearLoadingGuard();
     }
   },
 
   // 加载更多
   async loadMore() {
     const { selectedCity, searchKeyword, page, concerts } = this.data;
-    this.setData({ loading: true });
+    this.setData({ loading: true, loadError: '' });
 
     try {
       const city = selectedCity === '全部' ? '' : selectedCity;
@@ -194,6 +232,9 @@ Page({
     } catch (err) {
       console.error('加载更多失败:', err);
       showToast('加载失败，请重试');
+      this.setData({
+        loadError: (err && err.message) ? err.message : '加载更多失败'
+      });
     } finally {
       this.setData({ loading: false });
     }
@@ -281,6 +322,42 @@ Page({
   },
 
   // 查看详情
+  onTapTomorrowFast() {
+    wx.switchTab({
+      url: '/pages/tomorrow/tomorrow'
+    });
+  },
+
+  onTapSubscribeFast() {
+    wx.switchTab({
+      url: '/pages/subscribe/subscribe'
+    });
+  },
+
+  onTapHeatFast() {
+    showToast('热度榜功能设计中');
+  },
+
+  onTapSeatMap(e) {
+    const { id } = e.currentTarget.dataset;
+    if (!id) {
+      showToast('演出信息异常');
+      return;
+    }
+    wx.navigateTo({
+      url: `/pages/detail/detail?id=${id}&focus=seatMap`
+    });
+  },
+
+  onRetryLoad() {
+    this.setData({
+      page: 1,
+      hasMore: true,
+      loadError: ''
+    });
+    this.loadConcerts();
+  },
+
   onTapConcert(e) {
     const { id } = e.currentTarget.dataset;
     wx.navigateTo({

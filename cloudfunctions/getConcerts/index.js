@@ -1,4 +1,4 @@
-// cloudfunctions/getConcerts/index.js
+﻿// cloudfunctions/getConcerts/index.js
 const cloud = require('wx-server-sdk');
 
 cloud.init({
@@ -8,7 +8,7 @@ cloud.init({
 const db = cloud.database();
 const _ = db.command;
 
-exports.main = async (event, context) => {
+exports.main = async (event) => {
   const {
     keyword = '',
     city = '',
@@ -21,52 +21,47 @@ exports.main = async (event, context) => {
   } = event;
 
   try {
-    // 构建查询条件
     const conditions = [];
 
-    // 关键词搜索（艺人名或标题）
     if (keyword) {
-      conditions.push(_.or([
-        { title: db.RegExp({ regexp: keyword, options: 'i' }) },
-        { artist: db.RegExp({ regexp: keyword, options: 'i' }) },
-        { city: db.RegExp({ regexp: keyword, options: 'i' }) }
-      ]));
+      conditions.push(
+        _.or([
+          { title: db.RegExp({ regexp: keyword, options: 'i' }) },
+          { artist: db.RegExp({ regexp: keyword, options: 'i' }) },
+          { city: db.RegExp({ regexp: keyword, options: 'i' }) }
+        ])
+      );
     }
 
-    // 城市筛选
     if (city) {
-      conditions.push({ city: city });
+      conditions.push({ city });
     }
 
-    // 阶段筛选
     if (stage) {
-      conditions.push({ stage: stage });
+      conditions.push({ stage });
     }
 
-    // 艺人ID筛选
     if (artistId) {
-      conditions.push({ artistId: artistId });
+      conditions.push({ artistId });
     }
 
-    // 不包含草稿（除非是管理员查询）
     if (!includeAll) {
-      conditions.push(_.or([
-        { status: 'published' },
-        { status: _.exists(false) }
-      ]));
+      conditions.push(
+        _.or([
+          { status: 'published' },
+          { status: _.exists(false) }
+        ])
+      );
     }
 
-    // 构建最终查询
     let query = db.collection('concerts');
     if (conditions.length > 0) {
       query = query.where(_.and(conditions));
     }
 
-    // 获取总数
     const countResult = await query.count();
     const total = countResult.total;
 
-    // 排序
     let orderBy = 'dates';
     let orderDirection = 'asc';
     if (sortBy === 'hot') {
@@ -77,9 +72,27 @@ exports.main = async (event, context) => {
       orderDirection = 'desc';
     }
 
-    // 分页查询
     const skip = (page - 1) * pageSize;
     const listResult = await query
+      .field({
+        title: true,
+        artist: true,
+        artistId: true,
+        city: true,
+        venue: true,
+        province: true,
+        dates: true,
+        stage: true,
+        platforms: true,
+        priceRange: true,
+        poster: true,
+        status: true,
+        verified: true,
+        source: true,
+        subscribeCount: true,
+        updateTime: true,
+        createTime: true
+      })
       .orderBy(orderBy, orderDirection)
       .skip(skip)
       .limit(pageSize)
@@ -89,9 +102,9 @@ exports.main = async (event, context) => {
       code: 0,
       data: {
         list: listResult.data,
-        total: total,
-        page: page,
-        pageSize: pageSize
+        total,
+        page,
+        pageSize
       }
     };
   } catch (err) {

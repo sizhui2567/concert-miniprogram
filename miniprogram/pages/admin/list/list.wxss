@@ -1,7 +1,7 @@
 /* pages/admin/list/list.wxss */
 .container {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--ng-bg-elevated);
   padding-bottom: 120rpx;
 }
 
@@ -9,7 +9,7 @@
 .toolbar {
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--ng-bg-surface);
   padding-right: 20rpx;
 }
 
@@ -37,11 +37,11 @@
 
 .action-btn text {
   font-size: 20rpx;
-  color: #666;
+  color: var(--ng-text-secondary);
 }
 
 .action-btn.logout text {
-  color: #e74c3c;
+  color: var(--c-e74c3c);
 }
 
 /* 阶段筛选 */
@@ -49,8 +49,8 @@
   display: flex;
   white-space: nowrap;
   padding: 20rpx 10rpx;
-  background-color: #fff;
-  border-bottom: 1rpx solid #f0f0f0;
+  background-color: var(--ng-bg-surface);
+  border-bottom: 1rpx solid var(--c-f0f0f0);
 }
 
 .stage-item {
@@ -58,15 +58,15 @@
   padding: 12rpx 24rpx;
   margin: 0 10rpx;
   font-size: 24rpx;
-  color: #666;
-  background-color: #f5f5f5;
+  color: var(--ng-text-secondary);
+  background-color: var(--ng-bg-elevated);
   border-radius: 24rpx;
   flex-shrink: 0;
 }
 
 .stage-item.active {
-  color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--ng-bg-surface);
+  background: linear-gradient(135deg, var(--ng-accent) 0%, var(--ng-accent-strong) 100%);
 }
 
 /* 演唱会列表 */
@@ -75,7 +75,7 @@
 }
 
 .concert-item {
-  background-color: #fff;
+  background-color: var(--ng-bg-surface);
   border-radius: 16rpx;
   margin-bottom: 20rpx;
   overflow: hidden;
@@ -105,13 +105,13 @@
 .concert-title {
   font-size: 28rpx;
   font-weight: 500;
-  color: #333;
+  color: var(--ng-text-primary);
   margin-bottom: 8rpx;
 }
 
 .concert-meta {
   font-size: 24rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   margin-bottom: 12rpx;
 }
 
@@ -127,7 +127,7 @@
 
 .update-time {
   font-size: 22rpx;
-  color: #ccc;
+  color: var(--c-ccc);
   margin-left: auto;
 }
 
@@ -146,18 +146,18 @@
 }
 
 .status-draft {
-  color: #e67e22;
+  color: var(--c-e67e22);
   background-color: rgba(230, 126, 34, 0.1);
 }
 
 .status-unverified {
-  color: #3498db;
+  color: var(--c-3498db);
   background-color: rgba(52, 152, 219, 0.1);
 }
 
 .concert-actions {
   display: flex;
-  border-top: 1rpx solid #f5f5f5;
+  border-top: 1rpx solid var(--ng-bg-elevated);
 }
 
 .action-edit,
@@ -169,12 +169,12 @@
 }
 
 .action-edit {
-  color: #667eea;
-  border-right: 1rpx solid #f5f5f5;
+  color: var(--ng-accent);
+  border-right: 1rpx solid var(--ng-bg-elevated);
 }
 
 .action-delete {
-  color: #e74c3c;
+  color: var(--c-e74c3c);
 }
 
 /* 空状态 */
@@ -195,13 +195,13 @@
 
 .empty-state text {
   font-size: 28rpx;
-  color: #999;
+  color: var(--ng-text-muted);
   margin-bottom: 10rpx;
 }
 
 .empty-tip {
   font-size: 24rpx;
-  color: #ccc;
+  color: var(--c-ccc);
 }
 
 /* 加载更多 */
@@ -214,7 +214,7 @@
 
 .load-more text {
   font-size: 26rpx;
-  color: #999;
+  color: var(--ng-text-muted);
 }
 
 /* 添加按钮 */
@@ -224,7 +224,7 @@
   bottom: 60rpx;
   width: 100rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--ng-accent) 0%, var(--ng-accent-strong) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -234,6 +234,104 @@
 
 .add-btn text {
   font-size: 56rpx;
-  color: #fff;
+  color: var(--ng-bg-surface);
   line-height: 1;
+}
+
+/* Night Gold override */
+.container {
+  background: linear-gradient(180deg, var(--c-0f1115) 0%, var(--c-151922) 52%, var(--c-10131a) 100%);
+}
+
+.toolbar,
+.stage-filter,
+.concert-item {
+  background: var(--c-151922);
+  border: 1rpx solid rgba(201, 168, 106, 0.16);
+}
+
+.concert-title {
+  color: var(--c-f5f2ea);
+}
+
+.concert-meta,
+.update-time,
+.action-btn text,
+.stage-item,
+.empty-state text,
+.load-more text {
+  color: var(--c-b8b4aa);
+}
+
+.stage-item {
+  background: var(--c-1f2733);
+  border: 1rpx solid rgba(201, 168, 106, 0.2);
+}
+
+.stage-item.active,
+.add-btn {
+  background: linear-gradient(135deg, var(--c-c9a86a) 0%, var(--c-dfbf84) 100%);
+}
+
+.stage-item.active,
+.add-btn text {
+  color: var(--c-10131a);
+}
+
+.action-edit {
+  color: var(--c-dfbf84);
+  border-right-color: rgba(201, 168, 106, 0.15);
+}
+
+.concert-actions {
+  border-top-color: rgba(201, 168, 106, 0.15);
+}
+
+.container {
+  background: linear-gradient(180deg, var(--c-0f1115) 0%, var(--c-151922) 52%, var(--c-10131a) 100%);
+}
+
+.toolbar,
+.stage-filter,
+.concert-item {
+  background: var(--c-151922);
+  border: 1rpx solid rgba(201, 168, 106, 0.16);
+}
+
+.concert-title {
+  color: var(--c-f5f2ea);
+}
+
+.concert-meta,
+.load-more text,
+.empty-state text,
+.update-time,
+.action-btn text,
+.stage-item {
+  color: var(--c-b8b4aa);
+}
+
+.stage-item {
+  background: var(--c-1f2733);
+  border: 1rpx solid rgba(201, 168, 106, 0.2);
+}
+
+.stage-item.active,
+.add-btn {
+  background: linear-gradient(135deg, var(--c-c9a86a) 0%, var(--c-dfbf84) 100%);
+  color: var(--c-10131a);
+}
+
+.action-edit {
+  color: var(--c-dfbf84);
+  border-right-color: rgba(201, 168, 106, 0.15);
+}
+
+.concert-actions {
+  border-top-color: rgba(201, 168, 106, 0.15);
+}
+
+.add-btn text,
+.stage-item.active {
+  color: var(--c-10131a);
 }
