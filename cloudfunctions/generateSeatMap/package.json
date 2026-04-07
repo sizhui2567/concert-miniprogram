@@ -1,0 +1,9 @@
+{
+  "name": "generateSeatMap",
+  "version": "1.0.0",
+  "description": "服务端生成交互座位图",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

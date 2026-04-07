@@ -10,6 +10,29 @@ const _ = db.command;
 
 const VALID_RATINGS = ['clear', 'side', 'blocked'];
 
+function buildAreaSummary(list = []) {
+  const map = new Map();
+  list.forEach((item) => {
+    const areaId = String(item.areaId || 'unknown');
+    if (!map.has(areaId)) {
+      map.set(areaId, {
+        areaId,
+        areaName: item.areaName || areaId,
+        total: 0,
+        clear: 0,
+        side: 0,
+        blocked: 0
+      });
+    }
+    const row = map.get(areaId);
+    row.total += 1;
+    if (item.rating === 'side') row.side += 1;
+    else if (item.rating === 'blocked') row.blocked += 1;
+    else row.clear += 1;
+  });
+  return Array.from(map.values()).sort((a, b) => b.total - a.total);
+}
+
 async function isAdmin(openid) {
   if (!openid) return false;
   try {
@@ -110,6 +133,7 @@ exports.main = async (event) => {
         areaName: true,
         row: true,
         seat: true,
+        coordKey: true,
         note: true,
         rating: true,
         status: true,
@@ -138,7 +162,8 @@ exports.main = async (event) => {
         page: safePage,
         pageSize: safePageSize,
         sortBy: normalizedSortBy,
-        stats
+        stats,
+        areaSummary: buildAreaSummary(listRes.data || [])
       }
     };
   } catch (err) {

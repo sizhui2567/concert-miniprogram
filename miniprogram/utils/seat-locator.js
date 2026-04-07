@@ -1,68 +1,134 @@
-﻿// utils/seat-locator.js
-// 座位输入解析 + 座位坐标定位模板
+// utils/seat-locator.js
+// Seat input parser + seat coordinate locator with coordKey support.
+
+const AREA_INDEX_CACHE = new WeakMap();
 
 function normalizeText(input) {
   return String(input || '')
     .trim()
     .replace(/\s+/g, '')
-    .replace(/[（(]/g, '(')
-    .replace(/[）)]/g, ')')
+    .replace(/[\uFF08(]/g, '(')
+    .replace(/[\uFF09)]/g, ')')
+    .replace(/[\uFF0C]/g, ',')
     .toUpperCase();
 }
 
 function normalizeAreaToken(area) {
   return normalizeText(area)
-    .replace(/区$/i, '')
-    .replace(/^看台/i, '')
-    .replace(/^内场/i, '内场')
+    .replace(/\u533A$/i, '')
+    .replace(/^\u770B\u53F0/i, '')
+    .replace(/^\u5185\u573A/i, '\u5185\u573A')
     .replace(/^FLOOR[-_]?/i, 'FLOOR-');
+}
+
+function buildCoordKey(row, seat) {
+  const rowNum = Number(row);
+  const seatNum = Number(seat);
+  if (!Number.isFinite(rowNum) || !Number.isFinite(seatNum)) return '';
+  return `${rowNum},${seatNum}`;
+}
+
+function parseCoordKeyText(rawText) {
+  const text = normalizeText(rawText);
+  if (!text) return { ok: false };
+
+  let match = text.match(/^(\d{1,3}),(\d{1,3})$/);
+  if (!match) match = text.match(/^(\d{1,3})[-_\/](\d{1,3})$/);
+  if (!match) match = text.match(/^(\d{1,3})\u6392(\d{1,3})(?:\u5EA7|\u53F7)?$/i);
+  if (!match) return { ok: false };
+
+  const row = Number(match[1]);
+  const seat = Number(match[2]);
+  return {
+    ok: true,
+    row,
+    seat,
+    coordKey: buildCoordKey(row, seat)
+  };
 }
 
 function parseSeatInput(rawInput) {
   const input = normalizeText(rawInput);
   if (!input) {
-    return { ok: false, error: '座位输入为空' };
+    return { ok: false, error: 'Seat input is empty' };
   }
 
-  // 例：101区12排8座 / 内场A区3排12 / FLOOR-A3排12
-  let match = input.match(/^(.*?)(\d{1,3})排(\d{1,3})(?:座|号)?$/i);
-  if (match) {
+  // coord-only: 12,8 / 12-8 / 12排8座
+  const coordOnly = parseCoordKeyText(input);
+  if (coordOnly.ok) {
     return {
       ok: true,
-      areaToken: match[1],
-      row: Number(match[2]),
-      seat: Number(match[3]),
+      areaToken: '',
+      row: coordOnly.row,
+      seat: coordOnly.seat,
+      coordKey: coordOnly.coordKey,
       source: rawInput
     };
   }
 
-  // 例：101-12-8 / FLOOR-A-3-12 / 内场A区_3_12
+  // 101区12排8座 / 内场A区3排12座 / FLOOR-A3排12
+  let match = input.match(/^(.*?)(\d{1,3})\u6392(\d{1,3})(?:\u5EA7|\u53F7)?$/i);
+  if (match) {
+    const row = Number(match[2]);
+    const seat = Number(match[3]);
+    return {
+      ok: true,
+      areaToken: match[1],
+      row,
+      seat,
+      coordKey: buildCoordKey(row, seat),
+      source: rawInput
+    };
+  }
+
+  // 101-12-8 / FLOOR-A-3-12 / 内场A区_3_12
   match = input.match(/^(.*?)[-_\/](\d{1,3})[-_\/](\d{1,3})$/i);
   if (match) {
+    const row = Number(match[2]);
+    const seat = Number(match[3]);
     return {
       ok: true,
       areaToken: match[1],
-      row: Number(match[2]),
-      seat: Number(match[3]),
+      row,
+      seat,
+      coordKey: buildCoordKey(row, seat),
       source: rawInput
     };
   }
 
-  // 例：A101R12S8 / FLOOR-AR3S12
-  match = input.match(/^(.*?)R(\d{1,3})S(\d{1,3})$/i);
+  // 101-12,8 / FLOOR-A-3,12
+  match = input.match(/^(.*?)[-_\/](\d{1,3}),(\d{1,3})$/i);
   if (match) {
+    const row = Number(match[2]);
+    const seat = Number(match[3]);
     return {
       ok: true,
       areaToken: match[1],
-      row: Number(match[2]),
-      seat: Number(match[3]),
+      row,
+      seat,
+      coordKey: buildCoordKey(row, seat),
+      source: rawInput
+    };
+  }
+
+  // A101R12S8 / FLOOR-AR3S12
+  match = input.match(/^(.*?)R(\d{1,3})S(\d{1,3})$/i);
+  if (match) {
+    const row = Number(match[2]);
+    const seat = Number(match[3]);
+    return {
+      ok: true,
+      areaToken: match[1],
+      row,
+      seat,
+      coordKey: buildCoordKey(row, seat),
       source: rawInput
     };
   }
 
   return {
     ok: false,
-    error: '格式不支持，请用 101区12排8座 或 101-12-8'
+    error: 'Unsupported format. Use 101区12排8座 / 101-12-8 / 12,8'
   };
 }
 
@@ -81,6 +147,8 @@ function getAreaAliases(area) {
 
 function resolveAreaByToken(seatMap, areaToken) {
   const normalizedInput = normalizeAreaToken(areaToken);
+  if (!normalizedInput) return null;
+
   const areas = Array.isArray(seatMap && seatMap.areas) ? seatMap.areas : [];
 
   for (const area of areas) {
@@ -94,7 +162,7 @@ function resolveAreaByToken(seatMap, areaToken) {
     }
   }
 
-  // 兜底：包含匹配
+  // fallback: include match
   for (const area of areas) {
     const aliases = getAreaAliases(area);
     for (const alias of aliases) {
@@ -112,6 +180,12 @@ function resolveAreaByToken(seatMap, areaToken) {
   return null;
 }
 
+function resolveAreaById(seatMap, areaId) {
+  const areas = Array.isArray(seatMap && seatMap.areas) ? seatMap.areas : [];
+  if (!areaId) return null;
+  return areas.find((area) => String(area && area.id) === String(areaId)) || null;
+}
+
 function getSeatsPerRow(model, row) {
   const rowStart = Number(model.rowStart || 1);
   const rowIndex = row - rowStart;
@@ -126,7 +200,7 @@ function getSeatsPerRow(model, row) {
 
 function calcGridSeatPosition(gridModel, row, seat) {
   if (!gridModel) {
-    return { ok: false, error: '缺少网格座位模型' };
+    return { ok: false, error: 'Missing grid seat model' };
   }
 
   const rowStart = Number(gridModel.rowStart || 1);
@@ -137,7 +211,7 @@ function calcGridSeatPosition(gridModel, row, seat) {
   if (row < rowStart || row > rowMax) {
     return {
       ok: false,
-      error: `排号超出范围：${row}（可用 ${rowStart}-${rowMax}）`
+      error: `Row out of range: ${row} (valid ${rowStart}-${rowMax})`
     };
   }
 
@@ -146,7 +220,7 @@ function calcGridSeatPosition(gridModel, row, seat) {
   if (seat < seatStart || seat > seatMax) {
     return {
       ok: false,
-      error: `座号超出范围：${seat}（第 ${row} 排可用 ${seatStart}-${seatMax}）`
+      error: `Seat out of range: ${seat} (row ${row} valid ${seatStart}-${seatMax})`
     };
   }
 
@@ -174,23 +248,54 @@ function calcGridSeatPosition(gridModel, row, seat) {
     y: Number(y.toFixed(1)),
     row,
     seat,
+    coordKey: buildCoordKey(row, seat),
     seatsPerRow
   };
 }
 
+function parseSeatKeyToCoordKey(seatKey) {
+  const normalized = normalizeText(seatKey);
+  if (!normalized) return '';
+
+  // R12S8
+  let match = normalized.match(/^R(\d{1,3})S(\d{1,3})$/i);
+  if (match) return buildCoordKey(match[1], match[2]);
+
+  // 12-8 / 12_8 / 12,8
+  match = normalized.match(/^(\d{1,3})[-_,\/](\d{1,3})$/);
+  if (match) return buildCoordKey(match[1], match[2]);
+
+  return '';
+}
+
+function getPointCoordKey(point) {
+  if (!point || typeof point !== 'object') return '';
+  if (point.coordKey) {
+    const parsed = parseCoordKeyText(point.coordKey);
+    if (parsed.ok) return parsed.coordKey;
+  }
+  const fromRowSeat = buildCoordKey(point.row, point.seat);
+  if (fromRowSeat) return fromRowSeat;
+  if (point.seatKey) return parseSeatKeyToCoordKey(point.seatKey);
+  return '';
+}
+
 function findPointSeat(pointSeats, row, seat) {
   const list = Array.isArray(pointSeats) ? pointSeats : [];
-  const key = `${row}-${seat}`;
+  const targetCoordKey = buildCoordKey(row, seat);
 
   for (const p of list) {
     if (!p) continue;
-    if (String(p.seatKey || '').toUpperCase() === key.toUpperCase()) {
+    const coordKey = getPointCoordKey(p);
+    if (coordKey && coordKey === targetCoordKey) {
       return {
         ok: true,
         x: Number(Number(p.x || 0).toFixed(1)),
         y: Number(Number(p.y || 0).toFixed(1)),
         row,
         seat,
+        coordKey,
+        status: String(p.status || 'available'),
         from: 'point'
       };
     }
@@ -199,10 +304,88 @@ function findPointSeat(pointSeats, row, seat) {
   return { ok: false };
 }
 
-function locateSeatInArea(area, row, seat) {
+function getAreaCache(seatMap) {
+  if (!seatMap || typeof seatMap !== 'object') return null;
+  let cache = AREA_INDEX_CACHE.get(seatMap);
+  if (!cache) {
+    cache = {};
+    AREA_INDEX_CACHE.set(seatMap, cache);
+  }
+  return cache;
+}
+
+function buildAreaSeatIndex(area, seatMap) {
+  if (!area || !area.id) return {};
+
+  const cache = getAreaCache(seatMap);
+  const cacheKey = String(area.id);
+  if (cache && cache[cacheKey]) {
+    return cache[cacheKey];
+  }
+
+  const index = {};
+
+  const pushSeat = (item) => {
+    if (!item || typeof item !== 'object') return;
+    const coordKey = getPointCoordKey(item);
+    if (!coordKey) return;
+    const x = Number(item.x);
+    const y = Number(item.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+
+    if (!index[coordKey]) {
+      const parsed = parseCoordKeyText(coordKey);
+      index[coordKey] = {
+        coordKey,
+        row: parsed.ok ? parsed.row : Number(item.row || 0),
+        seat: parsed.ok ? parsed.seat : Number(item.seat || 0),
+        x: Number(x.toFixed(1)),
+        y: Number(y.toFixed(1)),
+        status: String(item.status || 'available')
+      };
+    }
+  };
+
+  const seatDetail = seatMap && seatMap.seatDetail;
+  if (seatDetail && seatDetail.enabled && Array.isArray(seatDetail.seats)) {
+    seatDetail.seats.forEach((item) => {
+      if (String(item && item.areaId) !== String(area.id)) return;
+      pushSeat(item);
+    });
+  }
+
+  const model = area.seatModel || {};
+  if (Array.isArray(model.pointSeats)) {
+    model.pointSeats.forEach(pushSeat);
+  }
+
+  if (cache) {
+    cache[cacheKey] = index;
+  }
+
+  return index;
+}
+
+function locateSeatInArea(area, row, seat, seatMap) {
   const model = area && area.seatModel;
   if (!model || !model.mode) {
-    return { ok: false, error: `区域 ${area && area.name} 未配置 seatModel` };
+    return { ok: false, error: `Area ${area && area.name} has no seatModel` };
+  }
+
+  const coordKey = buildCoordKey(row, seat);
+  const seatIndex = buildAreaSeatIndex(area, seatMap);
+  if (coordKey && seatIndex[coordKey]) {
+    const hit = seatIndex[coordKey];
+    return {
+      ok: true,
+      x: hit.x,
+      y: hit.y,
+      row: hit.row,
+      seat: hit.seat,
+      coordKey: hit.coordKey,
+      status: hit.status,
+      from: 'index'
+    };
   }
 
   if (model.mode === 'grid') {
@@ -220,29 +403,38 @@ function locateSeatInArea(area, row, seat) {
     if (pointHit.ok) return pointHit;
     return {
       ok: false,
-      error: `区域 ${area.name} 未找到 ${row}排${seat}座`
+      error: `Area ${area.name} cannot find seat ${row},${seat}`
     };
   }
 
-  return { ok: false, error: `不支持的 seatModel.mode: ${model.mode}` };
+  return { ok: false, error: `Unsupported seatModel.mode: ${model.mode}` };
 }
 
-function locateSeat(seatMap, seatInput) {
+function locateSeat(seatMap, seatInput, options = {}) {
   const parsed = parseSeatInput(seatInput);
-  if (!parsed.ok) {
-    return parsed;
+  if (!parsed.ok) return parsed;
+
+  const areas = Array.isArray(seatMap && seatMap.areas) ? seatMap.areas : [];
+  let area = null;
+  if (parsed.areaToken) {
+    area = resolveAreaByToken(seatMap, parsed.areaToken);
+  } else if (options.defaultAreaId) {
+    area = resolveAreaById(seatMap, options.defaultAreaId);
+  } else if (areas.length === 1) {
+    area = areas[0];
   }
 
-  const area = resolveAreaByToken(seatMap, parsed.areaToken);
   if (!area) {
     return {
       ok: false,
-      error: `未匹配到区域：${parsed.areaToken}`,
+      error: parsed.areaToken
+        ? `Area not found: ${parsed.areaToken}`
+        : 'Please provide area token, or select area first then input row/seat',
       parsed
     };
   }
 
-  const pos = locateSeatInArea(area, parsed.row, parsed.seat);
+  const pos = locateSeatInArea(area, parsed.row, parsed.seat, seatMap);
   if (!pos.ok) {
     return {
       ok: false,
@@ -260,8 +452,10 @@ function locateSeat(seatMap, seatInput) {
     areaName: area.name,
     x: pos.x,
     y: pos.y,
-    row: parsed.row,
-    seat: parsed.seat,
+    row: Number(pos.row || parsed.row),
+    seat: Number(pos.seat || parsed.seat),
+    coordKey: pos.coordKey || parsed.coordKey || buildCoordKey(parsed.row, parsed.seat),
+    status: pos.status || 'available',
     rawInput: seatInput
   };
 }
@@ -270,7 +464,7 @@ function toUserDot(locateResult, options = {}) {
   if (!locateResult || !locateResult.ok) return null;
 
   return {
-    id: options.id || `seat-${locateResult.areaId}-${locateResult.row}-${locateResult.seat}`,
+    id: options.id || `seat-${locateResult.areaId}-${locateResult.coordKey || `${locateResult.row}-${locateResult.seat}`}`,
     x: locateResult.x,
     y: locateResult.y,
     r: options.r || 5,
@@ -281,7 +475,9 @@ function toUserDot(locateResult, options = {}) {
 
 module.exports = {
   parseSeatInput,
+  parseCoordKeyText,
   resolveAreaByToken,
+  buildCoordKey,
   locateSeat,
   toUserDot
 };

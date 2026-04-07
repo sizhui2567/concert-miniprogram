@@ -1,4 +1,9 @@
-﻿// utils/seat-map-generator.js
+const cloud = require('wx-server-sdk');
+
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+
+const db = cloud.database();
+
 const DEFAULT_OPTIONS = {
   presetKey: 'arena_end',
   ringCount: 4,
@@ -13,91 +18,67 @@ const DEFAULT_OPTIONS = {
   boundaryRxRatio: 0.47,
   boundaryRyRatio: 0.43,
   priceTiers: [1680, 1280, 880, 680, 580, 480, 380],
-  overlayOpacity: 0.42
+  overlayOpacity: 0.42,
+  fallbackPresetKey: 'arena_end'
 };
 
-const SEAT_MAP_PRESETS = [
-  {
-    key: 'arena_end',
-    name: '体育馆端舞台',
-    description: '适合常见室内体育馆端舞台演出',
-    options: {
-      ringCount: 4,
-      sectorCount: 24,
-      startAngle: -160,
-      endAngle: 160,
-      stageCenterYRatio: 0.57,
-      stageRxRatio: 0.1,
-      stageRyRatio: 0.075,
-      boundaryRxRatio: 0.47,
-      boundaryRyRatio: 0.43,
-      priceTiers: [1680, 1280, 880, 680, 580, 480, 380]
-    }
+const PRESETS = {
+  arena_end: {
+    ringCount: 4,
+    sectorCount: 24,
+    startAngle: -160,
+    endAngle: 160,
+    stageCenterYRatio: 0.57,
+    stageRxRatio: 0.1,
+    stageRyRatio: 0.075,
+    boundaryRxRatio: 0.47,
+    boundaryRyRatio: 0.43,
+    priceTiers: [1680, 1280, 880, 680, 580, 480, 380]
   },
-  {
-    key: 'arena_center',
-    name: '体育馆中央舞台',
-    description: '适合四面台或中央舞台形式',
-    options: {
-      ringCount: 5,
-      sectorCount: 28,
-      startAngle: -178,
-      endAngle: 178,
-      stageCenterYRatio: 0.5,
-      stageRxRatio: 0.085,
-      stageRyRatio: 0.065,
-      boundaryRxRatio: 0.47,
-      boundaryRyRatio: 0.45,
-      priceTiers: [1980, 1580, 1280, 980, 780, 580]
-    }
+  arena_center: {
+    ringCount: 5,
+    sectorCount: 28,
+    startAngle: -178,
+    endAngle: 178,
+    stageCenterYRatio: 0.5,
+    stageRxRatio: 0.085,
+    stageRyRatio: 0.065,
+    boundaryRxRatio: 0.47,
+    boundaryRyRatio: 0.45,
+    priceTiers: [1980, 1580, 1280, 980, 780, 580]
   },
-  {
-    key: 'stadium_end',
-    name: '体育场端舞台',
-    description: '适合室外体育场大体量演出',
-    options: {
-      ringCount: 6,
-      sectorCount: 32,
-      startAngle: -165,
-      endAngle: 165,
-      stageCenterYRatio: 0.62,
-      stageRxRatio: 0.09,
-      stageRyRatio: 0.06,
-      boundaryRxRatio: 0.48,
-      boundaryRyRatio: 0.42,
-      priceTiers: [2380, 1880, 1380, 980, 680, 480]
-    }
+  stadium_end: {
+    ringCount: 6,
+    sectorCount: 32,
+    startAngle: -165,
+    endAngle: 165,
+    stageCenterYRatio: 0.62,
+    stageRxRatio: 0.09,
+    stageRyRatio: 0.06,
+    boundaryRxRatio: 0.48,
+    boundaryRyRatio: 0.42,
+    priceTiers: [2380, 1880, 1380, 980, 680, 480]
   },
-  {
-    key: 'theater_fan',
-    name: '剧院扇形',
-    description: '适合剧院、音乐厅等扇形看台',
-    options: {
-      ringCount: 3,
-      sectorCount: 18,
-      startAngle: -140,
-      endAngle: 140,
-      stageCenterYRatio: 0.68,
-      stageRxRatio: 0.14,
-      stageRyRatio: 0.08,
-      boundaryRxRatio: 0.44,
-      boundaryRyRatio: 0.36,
-      priceTiers: [1280, 980, 680, 480]
-    }
+  theater_fan: {
+    ringCount: 3,
+    sectorCount: 18,
+    startAngle: -140,
+    endAngle: 140,
+    stageCenterYRatio: 0.68,
+    stageRxRatio: 0.14,
+    stageRyRatio: 0.08,
+    boundaryRxRatio: 0.44,
+    boundaryRyRatio: 0.36,
+    priceTiers: [1280, 980, 680, 480]
   }
-];
-
-const PRESET_MAP = SEAT_MAP_PRESETS.reduce((acc, item) => {
-  acc[item.key] = item;
-  return acc;
-}, {});
+};
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
 function toFixedPoint(value) {
-  return Number(value.toFixed(1));
+  return Number(Number(value || 0).toFixed(1));
 }
 
 function toPolarPoint(cx, cy, rx, ry, angle) {
@@ -110,6 +91,17 @@ function toPolarPoint(cx, cy, rx, ry, angle) {
 
 function buildPolygonPoints(points) {
   return points.map((point) => `${point.x},${point.y}`).join(' ');
+}
+
+function resolveOptions(customOptions = {}) {
+  const presetKey = customOptions.presetKey || DEFAULT_OPTIONS.presetKey;
+  const preset = PRESETS[presetKey] || {};
+  return {
+    ...DEFAULT_OPTIONS,
+    ...preset,
+    ...(customOptions || {}),
+    presetKey
+  };
 }
 
 function getAreaType(ringIndex) {
@@ -127,6 +119,15 @@ function getLevelId(ringIndex) {
 function getFillColor(ringIndex) {
   const palette = ['#b88f3d', '#9b6bff', '#6a7890', '#4f607a', '#3e4a5d', '#2f3b4f'];
   return palette[Math.min(ringIndex, palette.length - 1)];
+}
+
+function getSectionLabel(ringIndex, sectorIndex) {
+  const sectionNumber = ringIndex * 100 + sectorIndex + 1;
+  return `${sectionNumber}`;
+}
+
+function getAreaPrice(ringIndex, options) {
+  return options.priceTiers[ringIndex] || options.priceTiers[options.priceTiers.length - 1] || 380;
 }
 
 function calcGridSeatPoint(model, row, seat) {
@@ -186,15 +187,6 @@ function buildSeatDetail(areas, maxPoints = 6000) {
     }
   }
   return { enabled: true, lodZoomThreshold: 2.4, truncated: false, seats };
-}
-
-function getAreaPrice(ringIndex, options) {
-  return options.priceTiers[ringIndex] || options.priceTiers[options.priceTiers.length - 1] || 380;
-}
-
-function getSectionLabel(ringIndex, sectorIndex) {
-  const sectionNumber = ringIndex * 100 + sectorIndex + 1;
-  return `${sectionNumber}`;
 }
 
 function createArea({
@@ -279,23 +271,10 @@ function createArea({
   };
 }
 
-function resolveSeatMapOptions(customOptions = {}) {
-  const presetKey = customOptions.presetKey || DEFAULT_OPTIONS.presetKey;
-  const preset = PRESET_MAP[presetKey];
-
-  return {
-    ...DEFAULT_OPTIONS,
-    ...(preset ? preset.options : {}),
-    ...(customOptions || {}),
-    presetKey
-  };
-}
-
-function buildSeatMapFromImage(imageInfo, customOptions = {}) {
-  const options = resolveSeatMapOptions(customOptions);
-
-  const width = Math.max(240, imageInfo.width || 620);
-  const height = Math.max(240, imageInfo.height || 570);
+function buildSeatMap(imageInfo, customOptions = {}) {
+  const options = resolveOptions(customOptions);
+  const width = Math.max(240, Number(imageInfo.width || 620));
+  const height = Math.max(240, Number(imageInfo.height || 570));
   const ringCount = clamp(Number(options.ringCount) || 4, 2, 8);
   const sectorCount = clamp(Number(options.sectorCount) || 24, 8, 64);
   const startAngle = Number(options.startAngle) || -160;
@@ -304,10 +283,8 @@ function buildSeatMapFromImage(imageInfo, customOptions = {}) {
 
   const centerX = width / 2;
   const centerY = height * clamp(options.stageCenterYRatio || 0.57, 0.35, 0.8);
-
   const stageRx = width * clamp(options.stageRxRatio || 0.1, 0.05, 0.24);
   const stageRy = height * clamp(options.stageRyRatio || 0.075, 0.04, 0.2);
-
   const boundaryRx = width * clamp(options.boundaryRxRatio || 0.47, 0.2, 0.5);
   const boundaryRy = height * clamp(options.boundaryRyRatio || 0.43, 0.2, 0.48);
   const innerStartRatio = 0.22;
@@ -321,37 +298,34 @@ function buildSeatMapFromImage(imageInfo, customOptions = {}) {
   for (let ringIndex = 0; ringIndex < ringCount; ringIndex += 1) {
     const ringInnerRatio = innerStartRatio + ringWidthRatio * ringIndex;
     const ringOuterRatio = innerStartRatio + ringWidthRatio * (ringIndex + 1) - ringGapRatio;
-
     const innerRx = boundaryRx * ringInnerRatio;
     const innerRy = boundaryRy * ringInnerRatio;
     const outerRx = boundaryRx * ringOuterRatio;
     const outerRy = boundaryRy * ringOuterRatio;
 
     for (let sectorIndex = 0; sectorIndex < sectorCount; sectorIndex += 1) {
-      areas.push(
-        createArea({
-          ringIndex,
-          sectorIndex,
-          sectorCount,
-          startAngle,
-          stepAngle,
-          angleGap,
-          innerRx,
-          innerRy,
-          outerRx,
-          outerRy,
-          centerX,
-          centerY,
-          options
-        })
-      );
+      areas.push(createArea({
+        ringIndex,
+        sectorIndex,
+        sectorCount,
+        startAngle,
+        stepAngle,
+        angleGap,
+        innerRx,
+        innerRy,
+        outerRx,
+        outerRy,
+        centerX,
+        centerY,
+        options
+      }));
     }
   }
 
   return {
     version: 'seat-map-v2',
     generatedAt: new Date().toISOString(),
-    sourceImage: imageInfo.fileID || imageInfo.path || '',
+    sourceImage: imageInfo.sourceImage || '',
     overlayOpacity: clamp(options.overlayOpacity, 0.08, 1),
     width,
     height,
@@ -382,8 +356,7 @@ function buildSeatMapFromImage(imageInfo, customOptions = {}) {
 }
 
 function parsePoints(points) {
-  if (!points || typeof points !== 'string') return [];
-  return points
+  return String(points || '')
     .trim()
     .split(/\s+/)
     .map((pair) => pair.split(','))
@@ -401,12 +374,8 @@ function areaBBox(area) {
     const h = Number(area.height || 0);
     return { minX: x, minY: y, maxX: x + w, maxY: y + h };
   }
-
   const points = parsePoints(area.points);
-  if (!points.length) {
-    return null;
-  }
-
+  if (!points.length) return null;
   const xs = points.map((p) => p.x);
   const ys = points.map((p) => p.y);
   return {
@@ -426,22 +395,20 @@ function bboxOverlapRatio(a, b) {
   const w = x2 - x1;
   const h = y2 - y1;
   if (w <= 0 || h <= 0) return 0;
-
   const overlap = w * h;
   const areaA = Math.max(1, (a.maxX - a.minX) * (a.maxY - a.minY));
   const areaB = Math.max(1, (b.maxX - b.minX) * (b.maxY - b.minY));
   return overlap / Math.min(areaA, areaB);
 }
 
-function validateSeatMapQuality(seatMap, customOptions = {}) {
-  const options = resolveSeatMapOptions(customOptions || seatMap?.options || {});
-
+function validateSeatMapQuality(seatMap, customOptions = {}, minScore = 72) {
+  const options = resolveOptions(customOptions || seatMap.options || {});
+  const scoreLine = clamp(Number(minScore || 72), 60, 95);
   const warnings = [];
   const fatals = [];
-  const areas = Array.isArray(seatMap?.areas) ? seatMap.areas : [];
-  const width = Number(seatMap?.width || 0);
-  const height = Number(seatMap?.height || 0);
-
+  const areas = Array.isArray(seatMap && seatMap.areas) ? seatMap.areas : [];
+  const width = Number((seatMap && seatMap.width) || 0);
+  const height = Number((seatMap && seatMap.height) || 0);
   let score = 100;
 
   if (!width || !height || width < 240 || height < 240) {
@@ -464,18 +431,15 @@ function validateSeatMapQuality(seatMap, customOptions = {}) {
   let invalidShapeCount = 0;
   let labelOutCount = 0;
   const bboxes = [];
-
   areas.forEach((area) => {
     if (!area || (!area.points && area.shapeType !== 'rect')) {
       invalidShapeCount += 1;
     }
-
-    const x = Number(area?.labelX);
-    const y = Number(area?.labelY);
+    const x = Number(area && area.labelX);
+    const y = Number(area && area.labelY);
     if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > width || y < 0 || y > height) {
       labelOutCount += 1;
     }
-
     bboxes.push(areaBBox(area));
   });
 
@@ -489,8 +453,8 @@ function validateSeatMapQuality(seatMap, customOptions = {}) {
     score -= Math.min(20, labelOutCount * 2);
   }
 
-  const stage = seatMap?.stage || {};
-  const boundary = seatMap?.boundary || {};
+  const stage = (seatMap && seatMap.stage) || {};
+  const boundary = (seatMap && seatMap.boundary) || {};
   const stageOutside =
     Number(stage.cx || 0) - Number(stage.rx || 0) < Number(boundary.cx || 0) - Number(boundary.rx || 0) ||
     Number(stage.cx || 0) + Number(stage.rx || 0) > Number(boundary.cx || 0) + Number(boundary.rx || 0) ||
@@ -510,9 +474,7 @@ function validateSeatMapQuality(seatMap, customOptions = {}) {
       if (checked > maxPairChecks) break;
       checked += 1;
       const ratio = bboxOverlapRatio(bboxes[i], bboxes[j]);
-      if (ratio > 0.42) {
-        overlapHighCount += 1;
-      }
+      if (ratio > 0.42) overlapHighCount += 1;
     }
     if (checked > maxPairChecks) break;
   }
@@ -521,77 +483,46 @@ function validateSeatMapQuality(seatMap, customOptions = {}) {
     score -= Math.min(18, overlapHighCount * 2);
   }
 
-  const ringPrice = {};
-  areas.forEach((area) => {
-    const match = /^r(\d+)s\d+$/.exec(String(area.id || ''));
-    if (!match) return;
-    const ring = Number(match[1]);
-    if (!ringPrice[ring]) ringPrice[ring] = [];
-    ringPrice[ring].push(Number(area.price || 0));
-  });
-
-  const ringAvg = Object.keys(ringPrice)
-    .map((k) => Number(k))
-    .sort((a, b) => a - b)
-    .map((ring) => {
-      const arr = ringPrice[ring].filter((x) => Number.isFinite(x) && x > 0);
-      const sum = arr.reduce((acc, x) => acc + x, 0);
-      return arr.length ? sum / arr.length : 0;
-    });
-
-  let priceOrderIssues = 0;
-  for (let i = 1; i < ringAvg.length; i += 1) {
-    if (ringAvg[i] > ringAvg[i - 1]) {
-      priceOrderIssues += 1;
-    }
-  }
-  if (priceOrderIssues > 0) {
-    warnings.push('票价层级存在反向升高，建议检查价格分层');
-    score -= Math.min(12, priceOrderIssues * 4);
-  }
-
   score = clamp(Math.round(score), 0, 100);
-  const ok = fatals.length === 0 && score >= 72;
+  const ok = fatals.length === 0 && score >= scoreLine;
 
   return {
     ok,
     score,
     warnings,
     fatals,
+    minScore: scoreLine,
     metrics: {
       areaCount: areas.length,
       expectedAreaCount,
       invalidShapeCount,
       labelOutCount,
-      overlapHighCount,
-      priceOrderIssues
+      overlapHighCount
     }
   };
 }
 
-function generateSeatMapWithGuard(imageInfo, customOptions = {}) {
-  const options = resolveSeatMapOptions(customOptions);
-  const seatMap = buildSeatMapFromImage(imageInfo, options);
-  const quality = validateSeatMapQuality(seatMap, options);
-
+function generateWithGuard(imageInfo, customOptions = {}, minScore = 72) {
+  const options = resolveOptions(customOptions);
+  const seatMap = buildSeatMap(imageInfo, options);
+  const quality = validateSeatMapQuality(seatMap, options, minScore);
   if (quality.ok) {
     return {
       seatMap,
       quality,
       usedFallback: false,
-      finalOptions: options
+      finalOptions: options,
+      fallbackPresetKey: ''
     };
   }
 
   const fallbackKey = options.fallbackPresetKey || 'arena_end';
-  const fallbackOptions = resolveSeatMapOptions({
+  const fallbackOptions = resolveOptions({
     ...customOptions,
     presetKey: fallbackKey
   });
-
-  const fallbackMap = buildSeatMapFromImage(imageInfo, fallbackOptions);
-  const fallbackQuality = validateSeatMapQuality(fallbackMap, fallbackOptions);
-
+  const fallbackMap = buildSeatMap(imageInfo, fallbackOptions);
+  const fallbackQuality = validateSeatMapQuality(fallbackMap, fallbackOptions, minScore);
   return {
     seatMap: fallbackMap,
     quality: fallbackQuality,
@@ -602,11 +533,55 @@ function generateSeatMapWithGuard(imageInfo, customOptions = {}) {
   };
 }
 
-module.exports = {
-  DEFAULT_OPTIONS,
-  SEAT_MAP_PRESETS,
-  resolveSeatMapOptions,
-  buildSeatMapFromImage,
-  validateSeatMapQuality,
-  generateSeatMapWithGuard
+async function isAdmin(openid) {
+  if (!openid) return false;
+  const adminRes = await db.collection('admins').where({ openid }).limit(1).get();
+  return adminRes.data.length > 0;
+}
+
+exports.main = async (event = {}) => {
+  try {
+    const { OPENID } = cloud.getWXContext();
+    const admin = await isAdmin(OPENID);
+    if (!admin) {
+      return { code: -1, message: '无权限操作' };
+    }
+
+    const imageInfo = event.imageInfo || {};
+    const sourceImage = String(event.sourceImage || imageInfo.sourceImage || '');
+    const width = Number(imageInfo.width || event.width || 620);
+    const height = Number(imageInfo.height || event.height || 570);
+    if (!Number.isFinite(width) || !Number.isFinite(height)) {
+      return { code: -1, message: '缺少有效图片尺寸（width/height）' };
+    }
+
+    const options = resolveOptions(event.options || {});
+    const minScore = clamp(Number(event.minScore || 72), 60, 95);
+    const result = generateWithGuard({
+      width,
+      height,
+      sourceImage
+    }, options, minScore);
+
+    result.seatMap.qualityReport = result.quality;
+    result.seatMap.finalOptions = result.finalOptions;
+
+    return {
+      code: 0,
+      data: {
+        seatMap: result.seatMap,
+        quality: result.quality,
+        usedFallback: !!result.usedFallback,
+        fallbackPresetKey: result.fallbackPresetKey || '',
+        originalQuality: result.originalQuality || null,
+        finalOptions: result.finalOptions
+      }
+    };
+  } catch (err) {
+    console.error('generateSeatMap error:', err);
+    return {
+      code: -1,
+      message: err.message || '生成座位图失败'
+    };
+  }
 };
