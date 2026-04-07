@@ -1,4 +1,4 @@
-// utils/seat-locator.js
+﻿// utils/seat-locator.js
 // Seat input parser + seat coordinate locator with coordKey support.
 
 const AREA_INDEX_CACHE = new WeakMap();
@@ -481,3 +481,4 @@ module.exports = {
   locateSeat,
   toUserDot
 };
+
